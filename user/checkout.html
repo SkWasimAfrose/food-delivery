@@ -13,7 +13,7 @@
         background-color: #f5f5f5;
       }
 
-      /* Fixed Header Layout - Same as Menu & Cart */
+      /* Fixed Header Layout - Same as Other Pages */
       .main-header {
         background: #e74c3c;
         position: sticky;
@@ -285,6 +285,10 @@
         font-size: 0.9rem;
       }
 
+      .add-address-btn:hover {
+        background: #2980b9;
+      }
+
       .address-card {
         border: 2px solid #ecf0f1;
         border-radius: 8px;
@@ -378,6 +382,32 @@
       .btn-secondary {
         background: #95a5a6;
         color: white;
+      }
+
+      /* Payment Method Styles */
+      .payment-options {
+        padding: 1rem 0;
+      }
+
+      .payment-option {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border: 2px solid #ecf0f1;
+        border-radius: 8px;
+        background: #f8fff8;
+        cursor: pointer;
+      }
+
+      .payment-option input[type="radio"] {
+        margin-right: 0.8rem;
+        transform: scale(1.2);
+      }
+
+      .payment-option span {
+        font-size: 1rem;
+        color: #2c3e50;
+        font-weight: 500;
       }
 
       .order-summary {
@@ -510,6 +540,63 @@
 
         .header-right {
           gap: 4px;
+        }
+      }
+      /* TARGETED HEADER BUTTON FIX - Mobile Only */
+      @media (max-width: 768px) {
+        /* Only fix header buttons - don't touch other elements */
+        .header-right {
+          gap: 12px !important; /* Force better spacing */
+          margin-right: 4px; /* Small margin from edge */
+        }
+
+        .icon-btn {
+          width: 38px !important;
+          height: 38px !important;
+          min-width: 38px; /* Prevent shrinking */
+          border-radius: 6px !important;
+        }
+
+        /* Better cart icon proportions */
+        .cart-icon {
+          width: 18px !important;
+          height: 18px !important;
+        }
+
+        .profile-icon {
+          width: 18px !important;
+          height: 18px !important;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .header-right {
+          gap: 10px !important;
+          margin-right: 2px;
+        }
+
+        .icon-btn {
+          width: 36px !important;
+          height: 36px !important;
+          min-width: 36px;
+        }
+
+        .cart-icon,
+        .profile-icon {
+          width: 16px !important;
+          height: 16px !important;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .header-right {
+          gap: 8px !important;
+        }
+
+        .icon-btn {
+          width: 34px !important;
+          height: 34px !important;
+          min-width: 34px;
         }
       }
     </style>
@@ -651,17 +738,13 @@
             </div>
           </div>
 
-          <!-- Payment Method Section -->
+          <!-- Payment Method Section - Simplified -->
           <div class="checkout-section">
             <h3>Payment Method</h3>
             <div class="payment-options">
               <label class="payment-option">
                 <input type="radio" name="payment" value="cod" checked />
-                <span>Cash on Delivery</span>
-              </label>
-              <label class="payment-option">
-                <input type="radio" name="payment" value="online" />
-                <span>Online Payment (Coming Soon)</span>
+                <span>Pay on Delivery</span>
               </label>
             </div>
           </div>
@@ -779,7 +862,7 @@
         }
       });
 
-      // Check authentication - handle admin access
+      // Check authentication
       onAuthStateChanged(auth, (user) => {
         if (user) {
           currentUser = user;
@@ -875,7 +958,7 @@
         }
       }
 
-      // Display order summary - SIMPLIFIED VERSION
+      // Display order summary
       function displayOrderSummary() {
         const container = document.getElementById("order-items");
         container.innerHTML = "";
@@ -964,132 +1047,148 @@
         console.log("📍 Selected address:", selectedAddress.name);
       }
 
-      // Show/hide add address form
-      document
-        .getElementById("add-address-btn")
-        .addEventListener("click", () => {
-          const form = document.getElementById("address-form");
-          form.style.display = form.style.display === "none" ? "block" : "none";
-        });
+      // Show/hide add address form - FIXED
+      document.addEventListener("DOMContentLoaded", function () {
+        const addAddressBtn = document.getElementById("add-address-btn");
+        const addressForm = document.getElementById("address-form");
+        const cancelAddressBtn = document.getElementById("cancel-address");
+        const newAddressForm = document.getElementById("new-address-form");
 
-      // Cancel add address
-      document
-        .getElementById("cancel-address")
-        .addEventListener("click", () => {
-          document.getElementById("address-form").style.display = "none";
-          document.getElementById("new-address-form").reset();
-        });
+        // Add address button click
+        if (addAddressBtn) {
+          addAddressBtn.addEventListener("click", function () {
+            console.log("Add address button clicked");
+            if (addressForm) {
+              addressForm.style.display =
+                addressForm.style.display === "block" ? "none" : "block";
+            }
+          });
+        }
 
-      // Handle new address form submission
-      document
-        .getElementById("new-address-form")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
+        // Cancel add address
+        if (cancelAddressBtn) {
+          cancelAddressBtn.addEventListener("click", function () {
+            if (addressForm) addressForm.style.display = "none";
+            if (newAddressForm) newAddressForm.reset();
+          });
+        }
 
-          const addressData = {
-            name: document.getElementById("address-name").value,
-            phone: document.getElementById("address-phone").value,
-            street: document.getElementById("address-street").value,
-            city: document.getElementById("address-city").value,
-            pincode: document.getElementById("address-pincode").value,
-            landmark: document.getElementById("address-landmark").value,
-            createdAt: new Date().toISOString(),
-          };
+        // Handle new address form submission
+        if (newAddressForm) {
+          newAddressForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            console.log("New address form submitted");
 
-          try {
-            console.log("💾 Saving new address...");
+            const addressData = {
+              name: document.getElementById("address-name").value,
+              phone: document.getElementById("address-phone").value,
+              street: document.getElementById("address-street").value,
+              city: document.getElementById("address-city").value,
+              pincode: document.getElementById("address-pincode").value,
+              landmark: document.getElementById("address-landmark").value,
+              createdAt: new Date().toISOString(),
+            };
 
-            // Add address to user's addresses array in Firestore
-            await updateDoc(doc(db, "users", currentUser.uid), {
-              addresses: arrayUnion(addressData),
-            });
+            try {
+              console.log("💾 Saving new address...");
 
-            console.log("✅ Address saved successfully!");
+              // Add address to user's addresses array in Firestore
+              await updateDoc(doc(db, "users", currentUser.uid), {
+                addresses: arrayUnion(addressData),
+              });
 
-            // Update local addresses and refresh display
-            userAddresses.push(addressData);
-            displayAddresses();
+              console.log("✅ Address saved successfully!");
 
-            // Hide form and reset
-            document.getElementById("address-form").style.display = "none";
-            document.getElementById("new-address-form").reset();
+              // Update local addresses and refresh display
+              userAddresses.push(addressData);
+              displayAddresses();
 
-            alert("Address saved successfully!");
-          } catch (error) {
-            console.error("❌ Error saving address:", error);
-            alert("Error saving address: " + error.message);
-          }
-        });
+              // Hide form and reset
+              addressForm.style.display = "none";
+              newAddressForm.reset();
 
-      // Place order functionality - SIMPLIFIED CALCULATION
-      document
-        .getElementById("place-order-btn")
-        .addEventListener("click", async () => {
-          if (!selectedAddress) {
-            alert("Please select a delivery address!");
-            return;
-          }
+              alert("Address saved successfully!");
+            } catch (error) {
+              console.error("❌ Error saving address:", error);
+              alert("Error saving address: " + error.message);
+            }
+          });
+        }
+      });
 
-          if (cart.length === 0) {
-            alert("Your cart is empty!");
-            return;
-          }
+      // Place order functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        const placeOrderBtn = document.getElementById("place-order-btn");
 
-          const subtotal = cart.reduce(
-            (sum, item) => sum + item.price * item.quantity,
-            0
-          );
-          const total = subtotal; // No additional charges
+        if (placeOrderBtn) {
+          placeOrderBtn.addEventListener("click", async function () {
+            if (!selectedAddress) {
+              alert("Please select a delivery address!");
+              return;
+            }
 
-          const orderData = {
-            userId: currentUser.uid,
-            userEmail: currentUser.email,
-            items: cart,
-            deliveryAddress: selectedAddress,
-            paymentMethod: document.querySelector(
-              'input[name="payment"]:checked'
-            ).value,
-            subtotal: subtotal,
-            totalAmount: total, // Simplified total
-            status: "pending",
-            orderDate: new Date().toISOString(),
-            estimatedDelivery: new Date(
-              Date.now() + 45 * 60 * 1000
-            ).toISOString(),
-          };
+            if (cart.length === 0) {
+              alert("Your cart is empty!");
+              return;
+            }
 
-          try {
-            console.log("📝 Placing order...");
-
-            const placeOrderBtn = document.getElementById("place-order-btn");
-            placeOrderBtn.textContent = "Placing Order...";
-            placeOrderBtn.disabled = true;
-
-            // Save order to Firestore
-            const orderRef = await addDoc(collection(db, "orders"), orderData);
-            console.log("✅ Order placed successfully! ID:", orderRef.id);
-
-            // Clear cart
-            localStorage.removeItem("cart");
-
-            // Show success message
-            alert(
-              `Order placed successfully!\n\nOrder ID: ${orderRef.id.substring(
-                0,
-                8
-              )}\nTotal: ₹${total}\nEstimated delivery: 45 minutes\n\nThank you for choosing Hotel Lee!`
+            const subtotal = cart.reduce(
+              (sum, item) => sum + item.price * item.quantity,
+              0
             );
+            const total = subtotal; // No additional charges
 
-            // Redirect to orders page
-            window.location.href = "orders.html";
-          } catch (error) {
-            console.error("❌ Error placing order:", error);
-            alert("Error placing order: " + error.message);
+            const orderData = {
+              userId: currentUser.uid,
+              userEmail: currentUser.email,
+              items: cart,
+              deliveryAddress: selectedAddress,
+              paymentMethod: "cod", // Always COD now
+              subtotal: subtotal,
+              totalAmount: total,
+              status: "pending",
+              orderDate: new Date().toISOString(),
+              estimatedDelivery: new Date(
+                Date.now() + 45 * 60 * 1000
+              ).toISOString(),
+            };
 
-            placeOrderBtn.textContent = "Place Order";
-            placeOrderBtn.disabled = false;
-          }
-        });
+            try {
+              console.log("📝 Placing order...");
+
+              placeOrderBtn.textContent = "Placing Order...";
+              placeOrderBtn.disabled = true;
+
+              // Save order to Firestore
+              const orderRef = await addDoc(
+                collection(db, "orders"),
+                orderData
+              );
+              console.log("✅ Order placed successfully! ID:", orderRef.id);
+
+              // Clear cart
+              localStorage.removeItem("cart");
+
+              // Show success message
+              alert(
+                `Order placed successfully!\n\nOrder ID: ${orderRef.id.substring(
+                  0,
+                  8
+                )}\nTotal: ₹${total}\nEstimated delivery: 45 minutes\n\nThank you for choosing Hotel Lee!`
+              );
+
+              // Redirect to orders page
+              window.location.href = "orders.html";
+            } catch (error) {
+              console.error("❌ Error placing order:", error);
+              alert("Error placing order: " + error.message);
+
+              placeOrderBtn.textContent = "Place Order";
+              placeOrderBtn.disabled = false;
+            }
+          });
+        }
+      });
 
       console.log("🛍️ Checkout page loaded successfully!");
     </script>

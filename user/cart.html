@@ -458,6 +458,63 @@
           gap: 4px;
         }
       }
+      /* TARGETED HEADER BUTTON FIX - Mobile Only */
+      @media (max-width: 768px) {
+        /* Only fix header buttons - don't touch other elements */
+        .header-right {
+          gap: 12px !important; /* Force better spacing */
+          margin-right: 4px; /* Small margin from edge */
+        }
+
+        .icon-btn {
+          width: 38px !important;
+          height: 38px !important;
+          min-width: 38px; /* Prevent shrinking */
+          border-radius: 6px !important;
+        }
+
+        /* Better cart icon proportions */
+        .cart-icon {
+          width: 18px !important;
+          height: 18px !important;
+        }
+
+        .profile-icon {
+          width: 18px !important;
+          height: 18px !important;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .header-right {
+          gap: 10px !important;
+          margin-right: 2px;
+        }
+
+        .icon-btn {
+          width: 36px !important;
+          height: 36px !important;
+          min-width: 36px;
+        }
+
+        .cart-icon,
+        .profile-icon {
+          width: 16px !important;
+          height: 16px !important;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .header-right {
+          gap: 8px !important;
+        }
+
+        .icon-btn {
+          width: 34px !important;
+          height: 34px !important;
+          min-width: 34px;
+        }
+      }
     </style>
   </head>
   <body>

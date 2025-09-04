@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopping Cart - Hotel Lee</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+      }
+
+      /* Fixed Header Layout - Same as Menu */
+      .main-header {
+        background: #e74c3c;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 20px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+
+      /* Left Section - Hamburger Menu */
+      .header-left {
+        display: flex;
+        justify-content: flex-start;
+        flex: 0 0 auto;
+      }
+
+      .hamburger-menu {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 4px;
+        transition: background 0.2s ease;
+      }
+
+      .hamburger-menu:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .line {
+        width: 22px;
+        height: 2px;
+        background: white;
+        margin: 4px 0;
+        border-radius: 2px;
+        transition: 0.3s;
+      }
+
+      .hamburger-menu.active .line:nth-child(1) {
+        transform: rotate(-45deg) translate(-4px, 4px);
+      }
+
+      .hamburger-menu.active .line:nth-child(2) {
+        opacity: 0;
+      }
+
+      .hamburger-menu.active .line:nth-child(3) {
+        transform: rotate(45deg) translate(-4px, -4px);
+      }
+
+      /* Center Section - Page Title */
+      .header-center {
+        display: flex;
+        justify-content: center;
+        flex: 1;
+        margin: 0 20px;
+      }
+
+      .page-title {
+        color: white;
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+      }
+
+      /* Right Section - Cart & Profile */
+      .header-right {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        flex: 0 0 auto;
+      }
+
+      .icon-btn {
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        position: relative;
+        flex-shrink: 0;
+      }
+
+      .icon-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-1px);
+      }
+
+      .icon-btn:active {
+        transform: translateY(0);
+      }
+
+      /* Cart Icon - Active State */
+      .cart-icon {
+        position: relative;
+        width: 20px;
+        height: 20px;
+      }
+
+      .cart-body {
+        width: 16px;
+        height: 12px;
+        border: 2px solid white;
+        border-top: none;
+        border-radius: 0 0 2px 2px;
+        position: absolute;
+        bottom: 0;
+        left: 2px;
+      }
+
+      .cart-handle {
+        width: 20px;
+        height: 8px;
+        border: 2px solid white;
+        border-bottom: none;
+        border-radius: 8px 8px 0 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      .cart-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #f39c12;
+        color: white;
+        font-size: 10px;
+        font-weight: bold;
+        padding: 2px 6px;
+        border-radius: 10px;
+        min-width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+      }
+
+      .cart-count:empty,
+      .cart-count[data-count="0"] {
+        display: none;
+      }
+
+      /* Profile Icon */
+      .profile-icon {
+        width: 20px;
+        height: 20px;
+        background: white;
+        border-radius: 50%;
+        position: relative;
+      }
+
+      .profile-icon::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        background: #e74c3c;
+        border-radius: 50%;
+        position: absolute;
+        top: 2px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .profile-icon::after {
+        content: "";
+        width: 14px;
+        height: 8px;
+        background: #e74c3c;
+        border-radius: 8px 8px 0 0;
+        position: absolute;
+        bottom: 1px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      /* Navigation Dropdown */
+      .nav-dropdown {
+        background: #c0392b;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+
+      .nav-dropdown.open {
+        max-height: 150px;
+      }
+
+      .nav-link {
+        display: block;
+        color: white;
+        text-decoration: none;
+        padding: 12px 20px;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .nav-link:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .nav-link.active {
+        background: rgba(255, 255, 255, 0.2);
+        font-weight: 600;
+      }
+
+      .nav-link:last-child {
+        border-bottom: none;
+      }
+
+      /* Cart Page Styles */
+      .cart-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+
+      .cart-header {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .cart-item {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .cart-item img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 5px;
+      }
+
+      .item-info {
+        flex: 1;
+      }
+
+      .item-info h3 {
+        margin: 0 0 0.5rem 0;
+        color: #2c3e50;
+      }
+
+      .item-info p {
+        margin: 0;
+        color: #7f8c8d;
+        font-size: 0.9rem;
+      }
+
+      .item-price {
+        font-weight: bold;
+        color: #e74c3c;
+        font-size: 1.1rem;
+      }
+
+      .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .qty-btn {
+        background: #3498db;
+        color: white;
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .qty-display {
+        min-width: 30px;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      .remove-btn {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 0.3rem 0.8rem;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+
+      .cart-summary {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 2rem;
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+      }
+
+      .summary-total {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #2c3e50;
+        border-top: 2px solid #ecf0f1;
+        padding-top: 0.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .checkout-btn {
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 1.1rem;
+        margin-top: 1rem;
+      }
+
+      .checkout-btn:hover {
+        background: #219a52;
+      }
+
+      .checkout-btn:disabled {
+        background: #bdc3c7;
+        cursor: not-allowed;
+      }
+
+      .empty-cart {
+        text-align: center;
+        padding: 3rem;
+        color: #7f8c8d;
+      }
+
+      .continue-shopping {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 1rem;
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
+        .header-container {
+          padding: 12px 16px;
+        }
+
+        .page-title {
+          font-size: 18px;
+        }
+
+        .header-center {
+          margin: 0 12px;
+        }
+
+        .icon-btn {
+          width: 36px;
+          height: 36px;
+        }
+
+        .header-right {
+          gap: 6px;
+        }
+
+        .cart-item {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .cart-item img {
+          width: 100px;
+          height: 100px;
+        }
+
+        .cart-container {
+          margin: 1rem auto;
+          padding: 0 0.5rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .page-title {
+          font-size: 16px;
+        }
+
+        .header-center {
+          margin: 0 8px;
+        }
+
+        .icon-btn {
+          width: 34px;
+          height: 34px;
+        }
+
+        .header-right {
+          gap: 4px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="main-header">
+      <div class="header-container">
+        <!-- LEFT: Hamburger Menu -->
+        <div class="header-left">
+          <button class="hamburger-menu" id="hamburger-menu">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+          </button>
+        </div>
+
+        <!-- CENTER: App Title -->
+        <div class="header-center">
+          <h1 class="page-title">Shopping Cart</h1>
+        </div>
+
+        <!-- RIGHT: Cart & Profile -->
+        <div class="header-right">
+          <button class="icon-btn cart-button" id="cart-button">
+            <div class="cart-icon">
+              <div class="cart-body"></div>
+              <div class="cart-handle"></div>
+              <span class="cart-count" id="cart-count">0</span>
+            </div>
+          </button>
+
+          <button
+            class="icon-btn profile-button"
+            onclick="window.location.href='profile.html'"
+          >
+            <div class="profile-icon"></div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dropdown Navigation -->
+      <nav class="nav-dropdown" id="nav-dropdown">
+        <a href="menu.html" class="nav-link">Menu</a>
+        <a href="orders.html" class="nav-link">Orders</a>
+        <button class="nav-link logout-link" id="logout-link">Logout</button>
+      </nav>
+    </header>
+
+    <main>
+      <div class="cart-container">
+        <div class="cart-header">
+          <h2>Your Order</h2>
+          <p>Review your items before checkout</p>
+        </div>
+
+        <div id="cart-content">
+          <!-- Cart items will be loaded here -->
+        </div>
+
+        <div id="cart-summary" class="cart-summary" style="display: none">
+          <h3>Order Summary</h3>
+          <div class="summary-row">
+            <span>Subtotal:</span>
+            <span id="subtotal">₹0</span>
+          </div>
+          <div class="summary-row summary-total">
+            <span>Total Amount:</span>
+            <span id="total-amount">₹0</span>
+          </div>
+          <button class="checkout-btn" id="checkout-btn">
+            Proceed to Checkout
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <script type="module">
+      // Import Firebase functions
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+      import {
+        getAuth,
+        signOut,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+      import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+      // Your Firebase config
+      const firebaseConfig = {
+        apiKey: "AIzaSyBMACWaT2ESi5A-q2vzBeNdWJZQDvDYOfk",
+        authDomain: "hotel-lee.firebaseapp.com",
+        projectId: "hotel-lee",
+        storageBucket: "hotel-lee.firebasestorage.app",
+        messagingSenderId: "763270960235",
+        appId: "1:763270960235:web:5343e8f87976424642cd2e",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      let currentUser = null;
+      let cart = [];
+
+      // Header functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        const hamburgerMenu = document.getElementById("hamburger-menu");
+        const navDropdown = document.getElementById("nav-dropdown");
+        const cartButton = document.getElementById("cart-button");
+        const logoutLink = document.getElementById("logout-link");
+
+        // Toggle navigation menu
+        hamburgerMenu.addEventListener("click", function () {
+          hamburgerMenu.classList.toggle("active");
+          navDropdown.classList.toggle("open");
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener("click", function (e) {
+          if (
+            !hamburgerMenu.contains(e.target) &&
+            !navDropdown.contains(e.target)
+          ) {
+            hamburgerMenu.classList.remove("active");
+            navDropdown.classList.remove("open");
+          }
+        });
+
+        // Cart button - scroll to top since we're already on cart page
+        cartButton.addEventListener("click", function () {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        // Logout functionality
+        logoutLink.addEventListener("click", async function () {
+          if (confirm("Are you sure you want to logout?")) {
+            try {
+              await signOut(auth);
+              localStorage.removeItem("cart");
+              window.location.href = "../index.html";
+            } catch (error) {
+              console.error("Logout error:", error);
+            }
+          }
+        });
+      });
+
+      // Check authentication - handle admin access
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          currentUser = user;
+          console.log("✅ User logged in:", user.email);
+
+          // If admin is logged in, show admin message but allow access
+          if (user.email === "admin@lee.com") {
+            showAdminMessage();
+          }
+
+          loadCart();
+        } else {
+          console.log("❌ No user logged in, redirecting...");
+          window.location.href = "../index.html";
+        }
+      });
+
+      // Function to show admin message
+      function showAdminMessage() {
+        // Add admin banner to cart page
+        const adminBanner = document.createElement("div");
+        adminBanner.style.cssText = `
+                background: #2c3e50;
+                color: white;
+                padding: 0.8rem;
+                text-align: center;
+                font-weight: bold;
+                position: sticky;
+                top: 0;
+                z-index: 999;
+            `;
+        adminBanner.innerHTML = `
+                Admin Mode Active | 
+                <button onclick="window.location.href='../admin/dashboard.html'" style="background:#e74c3c;color:white;border:none;padding:0.3rem 0.8rem;border-radius:3px;margin:0 0.5rem;cursor:pointer;">Go to Admin Panel</button>
+                <button onclick="adminLogout()" style="background:#95a5a6;color:white;border:none;padding:0.3rem 0.8rem;border-radius:3px;cursor:pointer;">Logout</button>
+            `;
+        document.body.insertBefore(adminBanner, document.body.firstChild);
+      }
+
+      // Admin logout function
+      window.adminLogout = async function () {
+        try {
+          await signOut(auth);
+          window.location.href = "../index.html";
+        } catch (error) {
+          console.error("Logout error:", error);
+        }
+      };
+
+      // Load cart from localStorage
+      function loadCart() {
+        const savedCart = localStorage.getItem("cart");
+        if (savedCart) {
+          cart = JSON.parse(savedCart);
+          console.log("🛒 Loaded cart with", cart.length, "items");
+        }
+        displayCart();
+        updateCartCounter();
+      }
+
+      // Update cart counter
+      function updateCartCounter() {
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const cartCountElement = document.getElementById("cart-count");
+        if (cartCountElement) {
+          cartCountElement.textContent = totalItems;
+          cartCountElement.setAttribute("data-count", totalItems);
+        }
+      }
+
+      // Display cart items
+      function displayCart() {
+        const container = document.getElementById("cart-content");
+        const summaryDiv = document.getElementById("cart-summary");
+
+        if (cart.length === 0) {
+          container.innerHTML = `
+                    <div class="empty-cart">
+                        <h3>Your cart is empty</h3>
+                        <p>Add some delicious items from our menu!</p>
+                        <a href="menu.html" class="continue-shopping">Continue Shopping</a>
+                    </div>
+                `;
+          summaryDiv.style.display = "none";
+          return;
+        }
+
+        // Display cart items
+        container.innerHTML = "";
+        cart.forEach((item, index) => {
+          const cartItemDiv = document.createElement("div");
+          cartItemDiv.className = "cart-item";
+          cartItemDiv.innerHTML = `
+                    <img src="${item.image}" alt="${
+            item.name
+          }" referrerpolicy="no-referrer">
+                    <div class="item-info">
+                        <h3>${item.name}</h3>
+                        <p>${item.description}</p>
+                        <p class="item-price">₹${item.price} each</p>
+                    </div>
+                    <div class="quantity-controls">
+                        <button class="qty-btn" onclick="decreaseQuantity(${index})">-</button>
+                        <span class="qty-display">${item.quantity}</span>
+                        <button class="qty-btn" onclick="increaseQuantity(${index})">+</button>
+                    </div>
+                    <div>
+                        <p class="item-price">₹${item.price * item.quantity}</p>
+                        <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
+                    </div>
+                `;
+          container.appendChild(cartItemDiv);
+        });
+
+        // Show and update summary
+        summaryDiv.style.display = "block";
+        updateSummary();
+      }
+
+      // Update cart summary - SIMPLIFIED VERSION (No delivery fee/taxes)
+      function updateSummary() {
+        const subtotal = cart.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0
+        );
+        const total = subtotal; // No additional charges
+
+        document.getElementById("subtotal").textContent = `₹${subtotal}`;
+        document.getElementById("total-amount").textContent = `₹${total}`;
+      }
+
+      // Increase quantity
+      window.increaseQuantity = function (index) {
+        cart[index].quantity += 1;
+        updateCart();
+      };
+
+      // Decrease quantity
+      window.decreaseQuantity = function (index) {
+        if (cart[index].quantity > 1) {
+          cart[index].quantity -= 1;
+        } else {
+          cart.splice(index, 1); // Remove item if quantity becomes 0
+        }
+        updateCart();
+      };
+
+      // Remove item from cart
+      window.removeFromCart = function (index) {
+        cart.splice(index, 1);
+        updateCart();
+      };
+
+      // Update cart and save to localStorage
+      function updateCart() {
+        localStorage.setItem("cart", JSON.stringify(cart));
+        displayCart();
+        updateCartCounter();
+        console.log("🛒 Cart updated, total items:", cart.length);
+      }
+
+      // Checkout button - redirect to checkout page
+      document.getElementById("checkout-btn").addEventListener("click", () => {
+        if (cart.length === 0) {
+          alert("Your cart is empty!");
+          return;
+        }
+        window.location.href = "checkout.html";
+      });
+
+      console.log("🛒 Cart page loaded successfully!");
+    </script>
+  </body>
+</html>

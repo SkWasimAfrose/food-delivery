@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up - Hotel Lee Food Delivery</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .signup-container {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        width: 400px;
+        max-width: 90vw;
+      }
+
+      .logo {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .logo h1 {
+        color: #e74c3c;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .logo p {
+        color: #7f8c8d;
+        font-size: 1rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+        font-weight: 500;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid #ecf0f1;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #e74c3c;
+      }
+
+      .signup-btn {
+        width: 100%;
+        padding: 1rem;
+        background: #27ae60;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background 0.3s;
+        margin-bottom: 1rem;
+      }
+
+      .signup-btn:hover {
+        background: #219a52;
+      }
+
+      .signup-btn:disabled {
+        background: #bdc3c7;
+        cursor: not-allowed;
+      }
+
+      .login-link {
+        text-align: center;
+        margin-top: 1rem;
+      }
+
+      .login-link p {
+        color: #7f8c8d;
+      }
+
+      .login-link a {
+        color: #e74c3c;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .login-link a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="signup-container">
+      <div class="logo">
+        <h1>🏨 Hotel Lee</h1>
+        <p>Create Your Account</p>
+      </div>
+
+      <form id="signup">
+        <div class="form-group">
+          <label for="signup-email">Email Address</label>
+          <input type="email" id="signup-email" required />
+        </div>
+
+        <div class="form-group">
+          <label for="signup-name">Full Name</label>
+          <input type="text" id="signup-name" required />
+        </div>
+
+        <div class="form-group">
+          <label for="signup-phone">Phone Number</label>
+          <input type="tel" id="signup-phone" required />
+        </div>
+
+        <div class="form-group">
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" required />
+        </div>
+
+        <button type="submit" class="signup-btn" id="signup-btn">
+          Create Account
+        </button>
+      </form>
+
+      <div class="login-link">
+        <p>Already have an account? <a href="index.html">Login here</a></p>
+      </div>
+    </div>
+
+    <script type="module">
+      // Import Firebase functions
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+      import {
+        getAuth,
+        createUserWithEmailAndPassword,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        setDoc,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+      // Your Firebase config
+      const firebaseConfig = {
+        apiKey: "AIzaSyBMACWaT2ESi5A-q2vzBeNdWJZQDvDYOfk",
+        authDomain: "hotel-lee.firebaseapp.com",
+        projectId: "hotel-lee",
+        storageBucket: "hotel-lee.firebasestorage.app",
+        messagingSenderId: "763270960235",
+        appId: "1:763270960235:web:5343e8f87976424642cd2e",
+      };
+
+      // Initialize Firebase
+      console.log("🔥 Initializing Firebase...");
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      console.log("✅ Firebase initialized successfully!");
+
+      // Check if user is already logged in
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          console.log("🔒 User already logged in:", user.email);
+          // Redirect to menu page
+          window.location.href = "user/menu.html";
+        } else {
+          console.log("👤 No user logged in");
+        }
+      });
+
+      // Handle Sign Up Form
+      document
+        .getElementById("signup")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          console.log("📝 Signup form submitted!");
+
+          // Get form values
+          const email = document.getElementById("signup-email").value;
+          const password = document.getElementById("signup-password").value;
+          const fullName = document.getElementById("signup-name").value;
+          const phoneNumber = document.getElementById("signup-phone").value;
+
+          console.log("📋 Form data:", { email, fullName, phoneNumber });
+
+          // Get submit button
+          const submitBtn = document.getElementById("signup-btn");
+          submitBtn.textContent = "Creating Account...";
+          submitBtn.disabled = true;
+
+          try {
+            // Create user with Firebase Auth
+            console.log("🔐 Creating user with Firebase Auth...");
+            const userCredential = await createUserWithEmailAndPassword(
+              auth,
+              email,
+              password
+            );
+            const user = userCredential.user;
+            console.log("✅ User created in Firebase Auth:", user.uid);
+
+            // Save user data to Firestore
+            console.log("💾 Saving user data to Firestore...");
+            await setDoc(doc(db, "users", user.uid), {
+              uid: user.uid,
+              email: email,
+              fullName: fullName,
+              phoneNumber: phoneNumber,
+              addresses: [],
+              createdAt: new Date().toISOString(),
+            });
+            console.log("✅ User data saved to Firestore successfully!");
+
+            // Success!
+            alert("🎉 Account created successfully!");
+            console.log("🚀 Signup process completed!");
+
+            // Redirect to menu page
+            window.location.href = "user/menu.html";
+          } catch (error) {
+            console.error("❌ Signup error:", error);
+            alert("Error: " + error.message);
+          } finally {
+            // Reset button
+            submitBtn.textContent = "Create Account";
+            submitBtn.disabled = false;
+          }
+        });
+    </script>
+  </body>
+</html>

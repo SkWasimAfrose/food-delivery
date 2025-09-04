@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Hotel Lee</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background: #f8f9fa;
+        color: #2c3e50;
+      }
+
+      .admin-header {
+        background: #2c3e50;
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .admin-nav {
+        background: #34495e;
+        padding: 0;
+      }
+
+      .nav-links {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .nav-links li {
+        border-right: 1px solid #2c3e50;
+      }
+
+      .nav-links a {
+        display: block;
+        color: white;
+        padding: 1rem 1.5rem;
+        text-decoration: none;
+        transition: background 0.2s;
+      }
+
+      .nav-links a:hover,
+      .nav-links a.active {
+        background: #2c3e50;
+      }
+
+      .dashboard-container {
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .stat-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #e74c3c;
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-label {
+        color: #7f8c8d;
+        font-size: 1rem;
+      }
+
+      .recent-orders {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .section-header {
+        background: #ecf0f1;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #bdc3c7;
+      }
+
+      .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .orders-table th,
+      .orders-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #ecf0f1;
+      }
+
+      .orders-table th {
+        background: #f8f9fa;
+        font-weight: 600;
+      }
+
+      .status-badge {
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+
+      .status-pending {
+        background: #fff3cd;
+        color: #856404;
+      }
+      .status-preparing {
+        background: #cce5ff;
+        color: #004085;
+      }
+      .status-delivered {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .logout-btn {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      @media (max-width: 768px) {
+        .nav-links {
+          flex-direction: column;
+        }
+        .nav-links li {
+          border-right: none;
+          border-bottom: 1px solid #2c3e50;
+        }
+        .dashboard-container {
+          padding: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="admin-header">
+      <h1>🏨 Hotel Lee Admin Dashboard</h1>
+      <button class="logout-btn" id="logout-btn">Logout</button>
+    </header>
+
+    <nav class="admin-nav">
+      <ul class="nav-links">
+        <li><a href="dashboard.html" class="active">📊 Dashboard</a></li>
+        <li><a href="orders-management.html">📦 Orders</a></li>
+        <li><a href="users.html">👥 Users</a></li>
+        <li><a href="menu-management.html">🍕 Menu</a></li>
+      </ul>
+    </nav>
+
+    <main class="dashboard-container">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📦</div>
+          <div class="stat-number" id="total-orders">0</div>
+          <div class="stat-label">Total Orders</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-number" id="total-users">0</div>
+          <div class="stat-label">Registered Users</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">💰</div>
+          <div class="stat-number" id="total-revenue">₹0</div>
+          <div class="stat-label">Total Revenue</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">🍕</div>
+          <div class="stat-number" id="menu-items">0</div>
+          <div class="stat-label">Menu Items</div>
+        </div>
+      </div>
+
+      <div class="recent-orders">
+        <div class="section-header">
+          <h3>Recent Orders</h3>
+        </div>
+        <table class="orders-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="recent-orders-body">
+            <!-- Recent orders will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBMACWaT2ESi5A-q2vzBeNdWJZQDvDYOfk",
+        authDomain: "hotel-lee.firebaseapp.com",
+        projectId: "hotel-lee",
+        storageBucket: "hotel-lee.firebasestorage.app",
+        messagingSenderId: "763270960235",
+        appId: "1:763270960235:web:5343e8f87976424642cd2e",
+      };
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      onAuthStateChanged(auth, (user) => {
+        if (!user || user.email !== "admin@lee.com") {
+          console.log("❌ Not authorized as admin");
+          window.location.href = "login.html";
+          return;
+        }
+        console.log("✅ Admin authenticated:", user.email);
+        loadDashboardData();
+      });
+
+      async function loadDashboardData() {
+        try {
+          console.log("📊 Loading dashboard data...");
+
+          // Load orders
+          const ordersSnapshot = await getDocs(collection(db, "orders"));
+          const orders = [];
+          let totalRevenue = 0;
+
+          ordersSnapshot.forEach((doc) => {
+            const order = doc.data();
+            orders.push(order);
+            totalRevenue += order.totalAmount || 0;
+          });
+
+          // Load users
+          const usersSnapshot = await getDocs(collection(db, "users"));
+          const totalUsers = usersSnapshot.size;
+
+          // Load menu items
+          const menuSnapshot = await getDocs(collection(db, "menuItems"));
+          const totalMenuItems = menuSnapshot.size;
+
+          console.log("📊 Stats:", {
+            orders: orders.length,
+            users: totalUsers,
+            revenue: totalRevenue,
+            menuItems: totalMenuItems,
+          });
+
+          // Update statistics cards
+          document.getElementById("total-orders").textContent = orders.length;
+          document.getElementById("total-users").textContent = totalUsers;
+          document.getElementById(
+            "total-revenue"
+          ).textContent = `₹${totalRevenue}`;
+          document.getElementById("menu-items").textContent = totalMenuItems;
+
+          // Display recent orders (last 5, newest first)
+          const recentOrders = orders
+            .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate))
+            .slice(0, 5);
+
+          displayRecentOrders(recentOrders);
+
+          console.log("✅ Dashboard data loaded successfully");
+        } catch (error) {
+          console.error("❌ Error loading dashboard data:", error);
+          // Still show some data even if there's an error
+          document.getElementById("total-orders").textContent = "Error";
+          document.getElementById("total-users").textContent = "Error";
+          document.getElementById("total-revenue").textContent = "Error";
+          document.getElementById("menu-items").textContent = "Error";
+        }
+      }
+
+      function displayRecentOrders(orders) {
+        const tbody = document.getElementById("recent-orders-body");
+        tbody.innerHTML = "";
+
+        if (orders.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="5" style="text-align: center; color: #7f8c8d;">No recent orders</td></tr>';
+          return;
+        }
+
+        orders.forEach((order) => {
+          const row = document.createElement("tr");
+          const orderDate = new Date(order.orderDate).toLocaleDateString(
+            "en-IN"
+          );
+
+          row.innerHTML = `
+          <td>#${(order.id || "unknown").substring(0, 8)}</td>
+          <td>${order.userEmail || "Unknown"}</td>
+          <td>₹${order.totalAmount}</td>
+          <td><span class="status-badge status-${order.status.replace(
+            / /g,
+            "-"
+          )}">${order.status}</span></td>
+          <td>${orderDate}</td>
+        `;
+          tbody.appendChild(row);
+        });
+      }
+
+      document.getElementById("logout-btn").onclick = async () => {
+        await signOut(auth);
+        window.location.href = "login.html";
+      };
+    </script>
+  </body>
+</html>

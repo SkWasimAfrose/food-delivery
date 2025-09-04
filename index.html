@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Hotel Lee Food Delivery</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .login-container {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        width: 400px;
+        max-width: 90vw;
+      }
+
+      .logo {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .logo h1 {
+        color: #e74c3c;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .logo p {
+        color: #7f8c8d;
+        font-size: 1rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+        font-weight: 500;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid #ecf0f1;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #e74c3c;
+      }
+
+      .login-btn {
+        width: 100%;
+        padding: 1rem;
+        background: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background 0.3s;
+        margin-bottom: 1rem;
+      }
+
+      .login-btn:hover {
+        background: #c0392b;
+      }
+
+      .login-btn:disabled {
+        background: #bdc3c7;
+        cursor: not-allowed;
+      }
+
+      .signup-link {
+        text-align: center;
+        margin-top: 1rem;
+      }
+
+      .signup-link p {
+        color: #7f8c8d;
+      }
+
+      .signup-link a {
+        color: #e74c3c;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .signup-link a:hover {
+        text-decoration: underline;
+      }
+
+      .admin-link {
+        text-align: center;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #ecf0f1;
+      }
+
+      .admin-link a {
+        color: #3498db;
+        text-decoration: none;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="logo">
+        <h1>🏨 Hotel Lee</h1>
+        <p>Food Delivery Service</p>
+      </div>
+
+      <form id="login">
+        <div class="form-group">
+          <label for="login-email">Email Address</label>
+          <input type="email" id="login-email" required />
+        </div>
+
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" required />
+        </div>
+
+        <button type="submit" class="login-btn" id="login-btn">Login</button>
+      </form>
+
+      <div class="signup-link">
+        <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
+      </div>
+
+      <div class="admin-link">
+        <a href="admin/login.html">Admin Panel</a>
+      </div>
+    </div>
+
+    <script type="module">
+      // Import Firebase functions
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+      import {
+        getAuth,
+        signInWithEmailAndPassword,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+      // Your Firebase config
+      const firebaseConfig = {
+        apiKey: "AIzaSyBMACWaT2ESi5A-q2vzBeNdWJZQDvDYOfk",
+        authDomain: "hotel-lee.firebaseapp.com",
+        projectId: "hotel-lee",
+        storageBucket: "hotel-lee.firebasestorage.app",
+        messagingSenderId: "763270960235",
+        appId: "1:763270960235:web:5343e8f87976424642cd2e",
+      };
+
+      // Initialize Firebase
+      console.log("🔥 Initializing Firebase...");
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      console.log("✅ Firebase initialized successfully!");
+
+      // Check if user is already logged in
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          console.log("🔒 User already logged in:", user.email);
+          // Redirect to menu page
+          window.location.href = "user/menu.html";
+        } else {
+          console.log("👤 No user logged in");
+        }
+      });
+
+      // Handle Login Form
+      document
+        .getElementById("login")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          console.log("🔑 Login form submitted!");
+
+          const email = document.getElementById("login-email").value;
+          const password = document.getElementById("login-password").value;
+
+          console.log("📋 Login data:", { email });
+
+          const submitBtn = document.getElementById("login-btn");
+          submitBtn.textContent = "Signing In...";
+          submitBtn.disabled = true;
+
+          try {
+            console.log("🔐 Signing in with Firebase Auth...");
+            const userCredential = await signInWithEmailAndPassword(
+              auth,
+              email,
+              password
+            );
+            const user = userCredential.user;
+            console.log("✅ User signed in successfully:", user.email);
+
+            // Redirect to menu page
+            window.location.href = "user/menu.html";
+          } catch (error) {
+            console.error("❌ Login error:", error);
+            alert("Error: " + error.message);
+          } finally {
+            submitBtn.textContent = "Login";
+            submitBtn.disabled = false;
+          }
+        });
+    </script>
+  </body>
+</html>

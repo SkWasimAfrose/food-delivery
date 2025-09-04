@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout - Hotel Lee</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+      }
+
+      /* Fixed Header Layout - Same as Menu & Cart */
+      .main-header {
+        background: #e74c3c;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 20px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+
+      /* Left Section - Hamburger Menu */
+      .header-left {
+        display: flex;
+        justify-content: flex-start;
+        flex: 0 0 auto;
+      }
+
+      .hamburger-menu {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 4px;
+        transition: background 0.2s ease;
+      }
+
+      .hamburger-menu:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .line {
+        width: 22px;
+        height: 2px;
+        background: white;
+        margin: 4px 0;
+        border-radius: 2px;
+        transition: 0.3s;
+      }
+
+      .hamburger-menu.active .line:nth-child(1) {
+        transform: rotate(-45deg) translate(-4px, 4px);
+      }
+
+      .hamburger-menu.active .line:nth-child(2) {
+        opacity: 0;
+      }
+
+      .hamburger-menu.active .line:nth-child(3) {
+        transform: rotate(45deg) translate(-4px, -4px);
+      }
+
+      /* Center Section - Page Title */
+      .header-center {
+        display: flex;
+        justify-content: center;
+        flex: 1;
+        margin: 0 20px;
+      }
+
+      .page-title {
+        color: white;
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+      }
+
+      /* Right Section - Cart & Profile */
+      .header-right {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        flex: 0 0 auto;
+      }
+
+      .icon-btn {
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        position: relative;
+        flex-shrink: 0;
+      }
+
+      .icon-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-1px);
+      }
+
+      .icon-btn:active {
+        transform: translateY(0);
+      }
+
+      /* Cart Icon */
+      .cart-icon {
+        position: relative;
+        width: 20px;
+        height: 20px;
+      }
+
+      .cart-body {
+        width: 16px;
+        height: 12px;
+        border: 2px solid white;
+        border-top: none;
+        border-radius: 0 0 2px 2px;
+        position: absolute;
+        bottom: 0;
+        left: 2px;
+      }
+
+      .cart-handle {
+        width: 20px;
+        height: 8px;
+        border: 2px solid white;
+        border-bottom: none;
+        border-radius: 8px 8px 0 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      .cart-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #f39c12;
+        color: white;
+        font-size: 10px;
+        font-weight: bold;
+        padding: 2px 6px;
+        border-radius: 10px;
+        min-width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+      }
+
+      .cart-count:empty,
+      .cart-count[data-count="0"] {
+        display: none;
+      }
+
+      /* Profile Icon */
+      .profile-icon {
+        width: 20px;
+        height: 20px;
+        background: white;
+        border-radius: 50%;
+        position: relative;
+      }
+
+      .profile-icon::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        background: #e74c3c;
+        border-radius: 50%;
+        position: absolute;
+        top: 2px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .profile-icon::after {
+        content: "";
+        width: 14px;
+        height: 8px;
+        background: #e74c3c;
+        border-radius: 8px 8px 0 0;
+        position: absolute;
+        bottom: 1px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      /* Navigation Dropdown */
+      .nav-dropdown {
+        background: #c0392b;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+
+      .nav-dropdown.open {
+        max-height: 150px;
+      }
+
+      .nav-link {
+        display: block;
+        color: white;
+        text-decoration: none;
+        padding: 12px 20px;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .nav-link:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .nav-link.active {
+        background: rgba(255, 255, 255, 0.2);
+        font-weight: 600;
+      }
+
+      .nav-link:last-child {
+        border-bottom: none;
+      }
+
+      /* Checkout Page Styles */
+      .checkout-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 2rem;
+      }
+
+      .checkout-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1rem;
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #ecf0f1;
+      }
+
+      .add-address-btn {
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+
+      .address-card {
+        border: 2px solid #ecf0f1;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: border-color 0.2s;
+      }
+
+      .address-card:hover {
+        border-color: #3498db;
+      }
+
+      .address-card.selected {
+        border-color: #27ae60;
+        background-color: #f8fff8;
+      }
+
+      .address-card h4 {
+        margin: 0 0 0.5rem 0;
+        color: #2c3e50;
+      }
+
+      .address-card p {
+        margin: 0.2rem 0;
+        color: #7f8c8d;
+      }
+
+      .address-form {
+        display: none;
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 5px;
+        margin-top: 1rem;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-group.full-width {
+        grid-column: 1 / -1;
+      }
+
+      .form-group label {
+        margin-bottom: 0.3rem;
+        font-weight: 500;
+        color: #2c3e50;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 60px;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+      }
+
+      .btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+
+      .btn-primary {
+        background: #27ae60;
+        color: white;
+      }
+
+      .btn-secondary {
+        background: #95a5a6;
+        color: white;
+      }
+
+      .order-summary {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        height: fit-content;
+        position: sticky;
+        top: 2rem;
+      }
+
+      .order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #ecf0f1;
+      }
+
+      .order-item:last-child {
+        border-bottom: none;
+      }
+
+      .order-item img {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin-right: 0.5rem;
+      }
+
+      .item-summary {
+        display: flex;
+        align-items: center;
+        flex: 1;
+      }
+
+      .item-name {
+        font-size: 0.9rem;
+        color: #2c3e50;
+      }
+
+      .item-qty {
+        color: #7f8c8d;
+        font-size: 0.8rem;
+      }
+
+      .summary-totals {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 2px solid #ecf0f1;
+      }
+
+      .total-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+      }
+
+      .final-total {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #e74c3c;
+      }
+
+      .place-order-btn {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 1.1rem;
+        margin-top: 1rem;
+      }
+
+      .place-order-btn:disabled {
+        background: #bdc3c7;
+        cursor: not-allowed;
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
+        .header-container {
+          padding: 12px 16px;
+        }
+
+        .page-title {
+          font-size: 18px;
+        }
+
+        .header-center {
+          margin: 0 12px;
+        }
+
+        .icon-btn {
+          width: 36px;
+          height: 36px;
+        }
+
+        .header-right {
+          gap: 6px;
+        }
+
+        .checkout-container {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .page-title {
+          font-size: 16px;
+        }
+
+        .header-center {
+          margin: 0 8px;
+        }
+
+        .icon-btn {
+          width: 34px;
+          height: 34px;
+        }
+
+        .header-right {
+          gap: 4px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="main-header">
+      <div class="header-container">
+        <!-- LEFT: Hamburger Menu -->
+        <div class="header-left">
+          <button class="hamburger-menu" id="hamburger-menu">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+          </button>
+        </div>
+
+        <!-- CENTER: App Title -->
+        <div class="header-center">
+          <h1 class="page-title">Checkout</h1>
+        </div>
+
+        <!-- RIGHT: Cart & Profile -->
+        <div class="header-right">
+          <button class="icon-btn cart-button" id="cart-button">
+            <div class="cart-icon">
+              <div class="cart-body"></div>
+              <div class="cart-handle"></div>
+              <span class="cart-count" id="cart-count">0</span>
+            </div>
+          </button>
+
+          <button
+            class="icon-btn profile-button"
+            onclick="window.location.href='profile.html'"
+          >
+            <div class="profile-icon"></div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dropdown Navigation -->
+      <nav class="nav-dropdown" id="nav-dropdown">
+        <a href="menu.html" class="nav-link">Menu</a>
+        <a href="orders.html" class="nav-link">Orders</a>
+        <button class="nav-link logout-link" id="logout-link">Logout</button>
+      </nav>
+    </header>
+
+    <main>
+      <div class="checkout-container">
+        <!-- Left Column: Address & Payment -->
+        <div class="checkout-main">
+          <!-- Delivery Address Section -->
+          <div class="checkout-section">
+            <div class="section-header">
+              <h3>Delivery Address</h3>
+              <button class="add-address-btn" id="add-address-btn">
+                + Add New Address
+              </button>
+            </div>
+
+            <div id="addresses-container">
+              <!-- Saved addresses will be loaded here -->
+            </div>
+
+            <!-- Add Address Form (Hidden by default) -->
+            <div class="address-form" id="address-form">
+              <h4>Add New Address</h4>
+              <form id="new-address-form">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="address-name">Address Label</label>
+                    <input
+                      type="text"
+                      id="address-name"
+                      placeholder="Home, Office, etc."
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="address-phone">Phone Number</label>
+                    <input
+                      type="tel"
+                      id="address-phone"
+                      placeholder="Contact number"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-group full-width">
+                  <label for="address-street">Street Address</label>
+                  <input
+                    type="text"
+                    id="address-street"
+                    placeholder="House/Flat number, Street name"
+                    required
+                  />
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="address-city">City</label>
+                    <input
+                      type="text"
+                      id="address-city"
+                      placeholder="City"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="address-pincode">Pincode</label>
+                    <input
+                      type="text"
+                      id="address-pincode"
+                      placeholder="PIN Code"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-group full-width">
+                  <label for="address-landmark">Landmark (Optional)</label>
+                  <textarea
+                    id="address-landmark"
+                    placeholder="Nearby landmark or additional instructions"
+                  ></textarea>
+                </div>
+                <div class="form-actions">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    id="cancel-address"
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    Save Address
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Payment Method Section -->
+          <div class="checkout-section">
+            <h3>Payment Method</h3>
+            <div class="payment-options">
+              <label class="payment-option">
+                <input type="radio" name="payment" value="cod" checked />
+                <span>Cash on Delivery</span>
+              </label>
+              <label class="payment-option">
+                <input type="radio" name="payment" value="online" />
+                <span>Online Payment (Coming Soon)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Order Summary -->
+        <div class="order-summary">
+          <h3>Order Summary</h3>
+
+          <div id="order-items">
+            <!-- Order items will be loaded here -->
+          </div>
+
+          <div class="summary-totals">
+            <div class="total-row">
+              <span>Subtotal:</span>
+              <span id="checkout-subtotal">₹0</span>
+            </div>
+            <div class="total-row final-total">
+              <span>Total Amount:</span>
+              <span id="checkout-total">₹0</span>
+            </div>
+          </div>
+
+          <button class="place-order-btn" id="place-order-btn" disabled>
+            Select Address to Place Order
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <script type="module">
+      // Import Firebase functions
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+      import {
+        getAuth,
+        signOut,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+        updateDoc,
+        arrayUnion,
+        collection,
+        addDoc,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+      // Your Firebase config
+      const firebaseConfig = {
+        apiKey: "AIzaSyBMACWaT2ESi5A-q2vzBeNdWJZQDvDYOfk",
+        authDomain: "hotel-lee.firebaseapp.com",
+        projectId: "hotel-lee",
+        storageBucket: "hotel-lee.firebasestorage.app",
+        messagingSenderId: "763270960235",
+        appId: "1:763270960235:web:5343e8f87976424642cd2e",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      let currentUser = null;
+      let cart = [];
+      let selectedAddress = null;
+      let userAddresses = [];
+
+      // Header functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        const hamburgerMenu = document.getElementById("hamburger-menu");
+        const navDropdown = document.getElementById("nav-dropdown");
+        const cartButton = document.getElementById("cart-button");
+        const logoutLink = document.getElementById("logout-link");
+
+        // Toggle navigation menu
+        if (hamburgerMenu && navDropdown) {
+          hamburgerMenu.addEventListener("click", function () {
+            hamburgerMenu.classList.toggle("active");
+            navDropdown.classList.toggle("open");
+          });
+
+          // Close menu when clicking outside
+          document.addEventListener("click", function (e) {
+            if (
+              !hamburgerMenu.contains(e.target) &&
+              !navDropdown.contains(e.target)
+            ) {
+              hamburgerMenu.classList.remove("active");
+              navDropdown.classList.remove("open");
+            }
+          });
+        }
+
+        // Cart button
+        if (cartButton) {
+          cartButton.addEventListener("click", function () {
+            window.location.href = "cart.html";
+          });
+        }
+
+        // Logout functionality
+        if (logoutLink) {
+          logoutLink.addEventListener("click", async function () {
+            if (confirm("Are you sure you want to logout?")) {
+              try {
+                await signOut(auth);
+                localStorage.removeItem("cart");
+                window.location.href = "../index.html";
+              } catch (error) {
+                console.error("Logout error:", error);
+              }
+            }
+          });
+        }
+      });
+
+      // Check authentication - handle admin access
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          currentUser = user;
+          console.log("✅ User logged in:", user.email);
+
+          // If admin is logged in, show admin message but allow access
+          if (user.email === "admin@lee.com") {
+            showAdminMessage();
+          }
+
+          loadCheckoutData();
+        } else {
+          console.log("❌ No user logged in, redirecting...");
+          window.location.href = "../index.html";
+        }
+      });
+
+      // Function to show admin message
+      function showAdminMessage() {
+        const adminBanner = document.createElement("div");
+        adminBanner.style.cssText = `
+                background: #2c3e50;
+                color: white;
+                padding: 0.8rem;
+                text-align: center;
+                font-weight: bold;
+                position: sticky;
+                top: 0;
+                z-index: 999;
+            `;
+        adminBanner.innerHTML = `
+                Admin Mode Active | 
+                <button onclick="window.location.href='../admin/dashboard.html'" style="background:#e74c3c;color:white;border:none;padding:0.3rem 0.8rem;border-radius:3px;margin:0 0.5rem;cursor:pointer;">Go to Admin Panel</button>
+                <button onclick="adminLogout()" style="background:#95a5a6;color:white;border:none;padding:0.3rem 0.8rem;border-radius:3px;cursor:pointer;">Logout</button>
+            `;
+        document.body.insertBefore(adminBanner, document.body.firstChild);
+      }
+
+      // Admin logout function
+      window.adminLogout = async function () {
+        try {
+          await signOut(auth);
+          window.location.href = "../index.html";
+        } catch (error) {
+          console.error("Logout error:", error);
+        }
+      };
+
+      // Load cart and user addresses
+      async function loadCheckoutData() {
+        // Load cart from localStorage
+        const savedCart = localStorage.getItem("cart");
+        if (savedCart) {
+          cart = JSON.parse(savedCart);
+          console.log("🛒 Loaded cart with", cart.length, "items");
+        }
+
+        if (cart.length === 0) {
+          alert("Your cart is empty! Redirecting to menu...");
+          window.location.href = "menu.html";
+          return;
+        }
+
+        // Load user addresses from Firestore
+        await loadUserAddresses();
+
+        // Display checkout data
+        displayOrderSummary();
+        displayAddresses();
+        updateCartCounter();
+      }
+
+      // Update cart counter
+      function updateCartCounter() {
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const cartCountElement = document.getElementById("cart-count");
+        if (cartCountElement) {
+          cartCountElement.textContent = totalItems;
+          cartCountElement.setAttribute("data-count", totalItems);
+        }
+      }
+
+      // Load user addresses from Firestore
+      async function loadUserAddresses() {
+        try {
+          const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+          if (userDoc.exists()) {
+            userAddresses = userDoc.data().addresses || [];
+            console.log("📍 Loaded", userAddresses.length, "saved addresses");
+          }
+        } catch (error) {
+          console.error("❌ Error loading addresses:", error);
+        }
+      }
+
+      // Display order summary - SIMPLIFIED VERSION
+      function displayOrderSummary() {
+        const container = document.getElementById("order-items");
+        container.innerHTML = "";
+
+        let subtotal = 0;
+
+        cart.forEach((item) => {
+          const itemTotal = item.price * item.quantity;
+          subtotal += itemTotal;
+
+          const orderItem = document.createElement("div");
+          orderItem.className = "order-item";
+          orderItem.innerHTML = `
+                    <div class="item-summary">
+                        <img src="${item.image}" alt="${item.name}" referrerpolicy="no-referrer">
+                        <div>
+                            <div class="item-name">${item.name}</div>
+                            <div class="item-qty">Qty: ${item.quantity}</div>
+                        </div>
+                    </div>
+                    <span>₹${itemTotal}</span>
+                `;
+          container.appendChild(orderItem);
+        });
+
+        const total = subtotal; // No additional charges
+
+        document.getElementById(
+          "checkout-subtotal"
+        ).textContent = `₹${subtotal}`;
+        document.getElementById("checkout-total").textContent = `₹${total}`;
+      }
+
+      // Display saved addresses
+      function displayAddresses() {
+        const container = document.getElementById("addresses-container");
+        container.innerHTML = "";
+
+        if (userAddresses.length === 0) {
+          container.innerHTML = `
+                    <p style="text-align: center; color: #7f8c8d; padding: 2rem;">
+                        No saved addresses. Please add a delivery address.
+                    </p>
+                `;
+          return;
+        }
+
+        userAddresses.forEach((address, index) => {
+          const addressCard = document.createElement("div");
+          addressCard.className = "address-card";
+          addressCard.innerHTML = `
+                    <h4>${address.name}</h4>
+                    <p><strong>${address.phone}</strong></p>
+                    <p>${address.street}</p>
+                    <p>${address.city}, ${address.pincode}</p>
+                    ${
+                      address.landmark
+                        ? `<p><em>Landmark: ${address.landmark}</em></p>`
+                        : ""
+                    }
+                `;
+
+          addressCard.addEventListener("click", () => selectAddress(index));
+          container.appendChild(addressCard);
+        });
+      }
+
+      // Select address
+      function selectAddress(index) {
+        selectedAddress = userAddresses[index];
+
+        // Update UI
+        document.querySelectorAll(".address-card").forEach((card, i) => {
+          if (i === index) {
+            card.classList.add("selected");
+          } else {
+            card.classList.remove("selected");
+          }
+        });
+
+        // Enable place order button
+        const placeOrderBtn = document.getElementById("place-order-btn");
+        placeOrderBtn.disabled = false;
+        placeOrderBtn.textContent = "Place Order";
+
+        console.log("📍 Selected address:", selectedAddress.name);
+      }
+
+      // Show/hide add address form
+      document
+        .getElementById("add-address-btn")
+        .addEventListener("click", () => {
+          const form = document.getElementById("address-form");
+          form.style.display = form.style.display === "none" ? "block" : "none";
+        });
+
+      // Cancel add address
+      document
+        .getElementById("cancel-address")
+        .addEventListener("click", () => {
+          document.getElementById("address-form").style.display = "none";
+          document.getElementById("new-address-form").reset();
+        });
+
+      // Handle new address form submission
+      document
+        .getElementById("new-address-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const addressData = {
+            name: document.getElementById("address-name").value,
+            phone: document.getElementById("address-phone").value,
+            street: document.getElementById("address-street").value,
+            city: document.getElementById("address-city").value,
+            pincode: document.getElementById("address-pincode").value,
+            landmark: document.getElementById("address-landmark").value,
+            createdAt: new Date().toISOString(),
+          };
+
+          try {
+            console.log("💾 Saving new address...");
+
+            // Add address to user's addresses array in Firestore
+            await updateDoc(doc(db, "users", currentUser.uid), {
+              addresses: arrayUnion(addressData),
+            });
+
+            console.log("✅ Address saved successfully!");
+
+            // Update local addresses and refresh display
+            userAddresses.push(addressData);
+            displayAddresses();
+
+            // Hide form and reset
+            document.getElementById("address-form").style.display = "none";
+            document.getElementById("new-address-form").reset();
+
+            alert("Address saved successfully!");
+          } catch (error) {
+            console.error("❌ Error saving address:", error);
+            alert("Error saving address: " + error.message);
+          }
+        });
+
+      // Place order functionality - SIMPLIFIED CALCULATION
+      document
+        .getElementById("place-order-btn")
+        .addEventListener("click", async () => {
+          if (!selectedAddress) {
+            alert("Please select a delivery address!");
+            return;
+          }
+
+          if (cart.length === 0) {
+            alert("Your cart is empty!");
+            return;
+          }
+
+          const subtotal = cart.reduce(
+            (sum, item) => sum + item.price * item.quantity,
+            0
+          );
+          const total = subtotal; // No additional charges
+
+          const orderData = {
+            userId: currentUser.uid,
+            userEmail: currentUser.email,
+            items: cart,
+            deliveryAddress: selectedAddress,
+            paymentMethod: document.querySelector(
+              'input[name="payment"]:checked'
+            ).value,
+            subtotal: subtotal,
+            totalAmount: total, // Simplified total
+            status: "pending",
+            orderDate: new Date().toISOString(),
+            estimatedDelivery: new Date(
+              Date.now() + 45 * 60 * 1000
+            ).toISOString(),
+          };
+
+          try {
+            console.log("📝 Placing order...");
+
+            const placeOrderBtn = document.getElementById("place-order-btn");
+            placeOrderBtn.textContent = "Placing Order...";
+            placeOrderBtn.disabled = true;
+
+            // Save order to Firestore
+            const orderRef = await addDoc(collection(db, "orders"), orderData);
+            console.log("✅ Order placed successfully! ID:", orderRef.id);
+
+            // Clear cart
+            localStorage.removeItem("cart");
+
+            // Show success message
+            alert(
+              `Order placed successfully!\n\nOrder ID: ${orderRef.id.substring(
+                0,
+                8
+              )}\nTotal: ₹${total}\nEstimated delivery: 45 minutes\n\nThank you for choosing Hotel Lee!`
+            );
+
+            // Redirect to orders page
+            window.location.href = "orders.html";
+          } catch (error) {
+            console.error("❌ Error placing order:", error);
+            alert("Error placing order: " + error.message);
+
+            placeOrderBtn.textContent = "Place Order";
+            placeOrderBtn.disabled = false;
+          }
+        });
+
+      console.log("🛍️ Checkout page loaded successfully!");
+    </script>
+  </body>
+</html>

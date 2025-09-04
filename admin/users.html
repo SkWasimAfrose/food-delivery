@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>User Management - Hotel Lee Admin</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        background: #f8f9fa;
+        color: #2c3e50;
+      }
+      .admin-header {
+        background: #2c3e50;
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+      }
+      .admin-nav {
+        background: #34495e;
+      }
+      .nav-links {
+        display: flex;
+        list-style: none;
+      }
+      .nav-links li {
+        border-right: 1px solid #2c3e50;
+      }
+      .nav-links li:last-child {
+        border-right: none;
+      }
+      .nav-links a {
+        display: block;
+        color: white;
+        padding: 1rem 1.5rem;
+        text-decoration: none;
+        transition: background 0.2s;
+      }
+      .nav-links a:hover,
+      .nav-links a.active {
+        background: #2c3e50;
+      }
+      .logout-btn {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      @media (max-width: 768px) {
+        .nav-links {
+          flex-direction: column;
+        }
+        .nav-links li {
+          border-right: none;
+          border-bottom: 1px solid #2c3e50;
+        }
+      }
+      main {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      th,
+      td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #ecf0f1;
+      }
+      th {
+        background: #ecf0f1;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="admin-header">
+      <h1>🏨 Hotel Lee Admin Dashboard</h1>
+      <button class="logout-btn" id="logout-btn">Logout</button>
+    </header>
+    <nav class="admin-nav">
+      <ul class="nav-links">
+        <li><a href="dashboard.html">📊 Dashboard</a></li>
+        <li><a href="orders-management.html">📦 Orders</a></li>
+        <li><a href="users.html" class="active">👥 Users</a></li>
+        <li><a href="menu-management.html">🍕 Menu</a></li>
+      </ul>
+    </nav>
+    <main>
+      <h2>👥 Registered Users</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>UID</th>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Joined</th>
+          </tr>
+        </thead>
+        <tbody id="users-body"></tbody>
+      </table>
+    </main>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBMACWaT2ESi5A-q2vzBeNdWJZQDvDYOfk",
+        authDomain: "hotel-lee.firebaseapp.com",
+        projectId: "hotel-lee",
+        storageBucket: "hotel-lee.firebasestorage.app",
+        messagingSenderId: "763270960235",
+        appId: "1:763270960235:web:5343e8f87976424642cd2e",
+      };
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      onAuthStateChanged(auth, (user) => {
+        if (!user || user.email !== "admin@lee.com") {
+          console.log("❌ Not authorized as admin");
+          window.location.href = "login.html";
+          return;
+        }
+        console.log("✅ Admin authenticated:", user.email);
+        loadUsers();
+      });
+
+      async function loadUsers() {
+        try {
+          console.log("👥 Loading users data...");
+
+          const usersSnapshot = await getDocs(collection(db, "users"));
+          const tbody = document.getElementById("users-body");
+          tbody.innerHTML = "";
+
+          if (usersSnapshot.empty) {
+            tbody.innerHTML =
+              '<tr><td colspan="5" style="text-align:center;color:#7f8c8d;">No users found</td></tr>';
+            return;
+          }
+
+          console.log("👥 Found", usersSnapshot.size, "users");
+
+          usersSnapshot.forEach((doc) => {
+            const user = doc.data();
+            const row = document.createElement("tr");
+
+            // Format join date
+            const joinDate = user.createdAt
+              ? new Date(user.createdAt).toLocaleDateString("en-IN")
+              : "Unknown";
+
+            row.innerHTML = `
+            <td>${doc.id.substring(0, 8)}...</td>
+            <td>${user.email || "N/A"}</td>
+            <td>${user.fullName || "N/A"}</td>
+            <td>${user.phoneNumber || "N/A"}</td>
+            <td>${joinDate}</td>
+          `;
+            tbody.appendChild(row);
+          });
+
+          console.log("✅ Users loaded successfully");
+        } catch (error) {
+          console.error("❌ Error loading users:", error);
+          document.getElementById(
+            "users-body"
+          ).innerHTML = `<tr><td colspan="5" style="text-align:center;color:#e74c3c;">Error loading users: ${error.message}</td></tr>`;
+        }
+      }
+
+      document.getElementById("logout-btn").onclick = async () => {
+        await signOut(auth);
+        window.location.href = "login.html";
+      };
+    </script>
+  </body>
+</html>

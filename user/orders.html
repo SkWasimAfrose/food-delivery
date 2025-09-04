@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Orders - Hotel Lee</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+      }
+
+      /* Fixed Header Layout - Same as Other Pages */
+      .main-header {
+        background: #e74c3c;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 20px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+
+      /* Left Section - Hamburger Menu */
+      .header-left {
+        display: flex;
+        justify-content: flex-start;
+        flex: 0 0 auto;
+      }
+
+      .hamburger-menu {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 4px;
+        transition: background 0.2s ease;
+      }
+
+      .hamburger-menu:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .line {
+        width: 22px;
+        height: 2px;
+        background: white;
+        margin: 4px 0;
+        border-radius: 2px;
+        transition: 0.3s;
+      }
+
+      .hamburger-menu.active .line:nth-child(1) {
+        transform: rotate(-45deg) translate(-4px, 4px);
+      }
+
+      .hamburger-menu.active .line:nth-child(2) {
+        opacity: 0;
+      }
+
+      .hamburger-menu.active .line:nth-child(3) {
+        transform: rotate(45deg) translate(-4px, -4px);
+      }
+
+      /* Center Section - Page Title */
+      .header-center {
+        display: flex;
+        justify-content: center;
+        flex: 1;
+        margin: 0 20px;
+      }
+
+      .page-title {
+        color: white;
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+      }
+
+      /* Right Section - Cart & Profile */
+      .header-right {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        flex: 0 0 auto;
+      }
+
+      .icon-btn {
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        position: relative;
+        flex-shrink: 0;
+      }
+
+      .icon-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-1px);
+      }
+
+      .icon-btn:active {
+        transform: translateY(0);
+      }
+
+      /* Cart Icon */
+      .cart-icon {
+        position: relative;
+        width: 20px;
+        height: 20px;
+      }
+
+      .cart-body {
+        width: 16px;
+        height: 12px;
+        border: 2px solid white;
+        border-top: none;
+        border-radius: 0 0 2px 2px;
+        position: absolute;
+        bottom: 0;
+        left: 2px;
+      }
+
+      .cart-handle {
+        width: 20px;
+        height: 8px;
+        border: 2px solid white;
+        border-bottom: none;
+        border-radius: 8px 8px 0 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      .cart-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #f39c12;
+        color: white;
+        font-size: 10px;
+        font-weight: bold;
+        padding: 2px 6px;
+        border-radius: 10px;
+        min-width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+      }
+
+      .cart-count:empty,
+      .cart-count[data-count="0"] {
+        display: none;
+      }
+
+      /* Profile Icon */
+      .profile-icon {
+        width: 20px;
+        height: 20px;
+        background: white;
+        border-radius: 50%;
+        position: relative;
+      }
+
+      .profile-icon::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        background: #e74c3c;
+        border-radius: 50%;
+        position: absolute;
+        top: 2px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .profile-icon::after {
+        content: "";
+        width: 14px;
+        height: 8px;
+        background: #e74c3c;
+        border-radius: 8px 8px 0 0;
+        position: absolute;
+        bottom: 1px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      /* Navigation Dropdown */
+      .nav-dropdown {
+        background: #c0392b;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+
+      .nav-dropdown.open {
+        max-height: 150px;
+      }
+
+      .nav-link {
+        display: block;
+        color: white;
+        text-decoration: none;
+        padding: 12px 20px;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .nav-link:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .nav-link.active {
+        background: rgba(255, 255, 255, 0.2);
+        font-weight: 600;
+      }
+
+      .nav-link:last-child {
+        border-bottom: none;
+      }
+
+      /* Orders Page Styles */
+      .orders-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+
+      .page-header {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .order-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #ecf0f1;
+      }
+
+      .order-id {
+        font-weight: bold;
+        color: #2c3e50;
+        font-size: 1.1rem;
+      }
+
+      .order-status {
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-transform: capitalize;
+      }
+
+      .status-pending {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .status-preparing {
+        background: #cce5ff;
+        color: #004085;
+      }
+
+      .status-out-for-delivery {
+        background: #e7c3ff;
+        color: #6f42c1;
+      }
+
+      .status-delivered {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .order-date {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+      }
+
+      .order-items {
+        margin: 1rem 0;
+      }
+
+      .order-items h4 {
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+      }
+
+      .item-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .item-list li {
+        padding: 0.3rem 0;
+        color: #555;
+        border-bottom: 1px dotted #ddd;
+      }
+
+      .item-list li:last-child {
+        border-bottom: none;
+      }
+
+      .order-summary {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #ecf0f1;
+      }
+
+      .delivery-address {
+        color: #555;
+      }
+
+      .delivery-address h5 {
+        color: #2c3e50;
+        margin-bottom: 0.3rem;
+      }
+
+      .order-total {
+        text-align: right;
+      }
+
+      .order-total h5 {
+        color: #2c3e50;
+        margin-bottom: 0.3rem;
+      }
+
+      .total-amount {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #e74c3c;
+      }
+
+      .empty-orders {
+        text-align: center;
+        padding: 3rem;
+        color: #7f8c8d;
+      }
+
+      .empty-orders h3 {
+        margin-bottom: 1rem;
+      }
+
+      .order-now-btn {
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 1rem;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 2rem;
+        color: #7f8c8d;
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
+        .header-container {
+          padding: 12px 16px;
+        }
+
+        .page-title {
+          font-size: 18px;
+        }
+
+        .header-center {
+          margin: 0 12px;
+        }
+
+        .icon-btn {
+          width: 36px;
+          height: 36px;
+        }
+
+        .header-right {
+          gap: 6px;
+        }
+
+        .order-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+        }
+
+        .order-summary {
+          grid-template-columns: 1fr;
+        }
+
+        .orders-container {
+          margin: 1rem auto;
+          padding: 0 0.5rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .page-title {
+          font-size: 16px;
+        }
+
+        .header-center {
+          margin: 0 8px;
+        }
+
+        .icon-btn {
+          width: 34px;
+          height: 34px;
+        }
+
+        .header-right {
+          gap: 4px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="main-header">
+      <div class="header-container">
+        <!-- LEFT: Hamburger Menu -->
+        <div class="header-left">
+          <button class="hamburger-menu" id="hamburger-menu">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+          </button>
+        </div>
+
+        <!-- CENTER: App Title -->
+        <div class="header-center">
+          <h1 class="page-title">Your Orders</h1>
+        </div>
+
+        <!-- RIGHT: Cart & Profile -->
+        <div class="header-right">
+          <button class="icon-btn cart-button" id="cart-button">
+            <div class="cart-icon">
+              <div class="cart-body"></div>
+              <div class="cart-handle"></div>
+              <span class="cart-count" id="cart-count">0</span>
+            </div>
+          </button>
+
+          <button
+            class="icon-btn profile-button"
+            onclick="window.location.href='profile.html'"
+          >
+            <div class="profile-icon"></div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dropdown Navigation -->
+      <nav class="nav-dropdown" id="nav-dropdown">
+        <a href="menu.html" class="nav-link">Menu</a>
+        <a href="orders.html" class="nav-link active">Orders</a>
+        <button class="nav-link logout-link" id="logout-link">Logout</button>
+      </nav>
+    </header>
+
+    <main>
+      <div class="orders-container">
+        <div class="page-header">
+          <h2>Order History</h2>
+          <p>Track your food delivery orders</p>
+        </div>
+
+        <div id="orders-content">
+          <div class="loading">
+            <p>Loading your orders...</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script type="module">
+      // Import Firebase functions
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+      import {
+        getAuth,
+        signOut,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        query,
+        where,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+      // Your Firebase config
+      const firebaseConfig = {
+        apiKey: "AIzaSyBMACWaT2ESi5A-q2vzBeNdWJZQDvDYOfk",
+        authDomain: "hotel-lee.firebaseapp.com",
+        projectId: "hotel-lee",
+        storageBucket: "hotel-lee.firebasestorage.app",
+        messagingSenderId: "763270960235",
+        appId: "1:763270960235:web:5343e8f87976424642cd2e",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      let currentUser = null;
+
+      // Header functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        const hamburgerMenu = document.getElementById("hamburger-menu");
+        const navDropdown = document.getElementById("nav-dropdown");
+        const cartButton = document.getElementById("cart-button");
+        const logoutLink = document.getElementById("logout-link");
+
+        // Toggle navigation menu
+        if (hamburgerMenu && navDropdown) {
+          hamburgerMenu.addEventListener("click", function () {
+            hamburgerMenu.classList.toggle("active");
+            navDropdown.classList.toggle("open");
+          });
+
+          // Close menu when clicking outside
+          document.addEventListener("click", function (e) {
+            if (
+              !hamburgerMenu.contains(e.target) &&
+              !navDropdown.contains(e.target)
+            ) {
+              hamburgerMenu.classList.remove("active");
+              navDropdown.classList.remove("open");
+            }
+          });
+        }
+
+        // Cart button
+        if (cartButton) {
+          cartButton.addEventListener("click", function () {
+            window.location.href = "cart.html";
+          });
+        }
+
+        // Logout functionality
+        if (logoutLink) {
+          logoutLink.addEventListener("click", async function () {
+            if (confirm("Are you sure you want to logout?")) {
+              try {
+                await signOut(auth);
+                localStorage.removeItem("cart");
+                window.location.href = "../index.html";
+              } catch (error) {
+                console.error("Logout error:", error);
+              }
+            }
+          });
+        }
+
+        // Update cart counter
+        updateCartCounter();
+      });
+
+      // Update cart counter
+      function updateCartCounter() {
+        const savedCart = localStorage.getItem("cart");
+        const cart = savedCart ? JSON.parse(savedCart) : [];
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const cartCountElement = document.getElementById("cart-count");
+        if (cartCountElement) {
+          cartCountElement.textContent = totalItems;
+          cartCountElement.setAttribute("data-count", totalItems);
+        }
+      }
+
+      // Check authentication - handle admin access
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          currentUser = user;
+          console.log("✅ User logged in:", user.email);
+
+          // If admin is logged in, show admin message but allow access
+          if (user.email === "admin@lee.com") {
+            showAdminMessage();
+          }
+
+          loadUserOrders();
+        } else {
+          console.log("❌ No user logged in, redirecting...");
+          window.location.href = "../index.html";
+        }
+      });
+
+      // Function to show admin message
+      function showAdminMessage() {
+        const adminBanner = document.createElement("div");
+        adminBanner.style.cssText = `
+                background: #2c3e50;
+                color: white;
+                padding: 0.8rem;
+                text-align: center;
+                font-weight: bold;
+                position: sticky;
+                top: 0;
+                z-index: 999;
+            `;
+        adminBanner.innerHTML = `
+                Admin Mode Active | 
+                <button onclick="window.location.href='../admin/dashboard.html'" style="background:#e74c3c;color:white;border:none;padding:0.3rem 0.8rem;border-radius:3px;margin:0 0.5rem;cursor:pointer;">Go to Admin Panel</button>
+                <button onclick="adminLogout()" style="background:#95a5a6;color:white;border:none;padding:0.3rem 0.8rem;border-radius:3px;cursor:pointer;">Logout</button>
+            `;
+        document.body.insertBefore(adminBanner, document.body.firstChild);
+      }
+
+      // Admin logout function
+      window.adminLogout = async function () {
+        try {
+          await signOut(auth);
+          window.location.href = "../index.html";
+        } catch (error) {
+          console.error("Logout error:", error);
+        }
+      };
+
+      // Load user's orders from Firestore
+      async function loadUserOrders() {
+        try {
+          console.log("📦 Loading user orders...");
+          console.log("🔍 Searching for orders with userId:", currentUser.uid);
+
+          const ordersContainer = document.getElementById("orders-content");
+          ordersContainer.innerHTML =
+            '<div class="loading"><p>Loading your orders...</p></div>';
+
+          // Query for user's orders
+          const ordersQuery = query(
+            collection(db, "orders"),
+            where("userId", "==", currentUser.uid)
+          );
+
+          console.log("🔍 Executing query...");
+          const querySnapshot = await getDocs(ordersQuery);
+          console.log(
+            "📋 Query completed. Found",
+            querySnapshot.size,
+            "orders"
+          );
+
+          if (querySnapshot.empty) {
+            console.log("📭 No orders found for user:", currentUser.uid);
+            ordersContainer.innerHTML = `
+                        <div class="empty-orders">
+                            <h3>No Orders Yet</h3>
+                            <p>You haven't placed any orders yet.</p>
+                            <p>Start by browsing our delicious menu!</p>
+                            <a href="menu.html" class="order-now-btn">Order Now</a>
+                        </div>
+                    `;
+            return;
+          }
+
+          // Convert to array and sort manually by date (newest first)
+          const orders = [];
+          querySnapshot.forEach((doc) => {
+            orders.push({
+              id: doc.id,
+              ...doc.data(),
+            });
+          });
+
+          // Sort by orderDate (newest first)
+          orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+
+          // Display orders
+          ordersContainer.innerHTML = "";
+          console.log("🎨 Rendering", orders.length, "orders");
+
+          orders.forEach((order, index) => {
+            console.log(`📦 Rendering order ${index + 1}:`, order.id);
+
+            const orderCard = document.createElement("div");
+            orderCard.className = "order-card";
+
+            // Format date
+            const orderDate = new Date(order.orderDate).toLocaleString(
+              "en-IN",
+              {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              }
+            );
+
+            // Format items list
+            const itemsHTML = order.items
+              .map(
+                (item) =>
+                  `<li>${item.name} x${item.quantity} - ₹${
+                    item.price * item.quantity
+                  }</li>`
+              )
+              .join("");
+
+            // Format delivery address
+            const address = order.deliveryAddress;
+            const addressHTML = `${address.street}, ${address.city}, ${address.pincode}`;
+
+            orderCard.innerHTML = `
+                        <div class="order-header">
+                            <div class="order-id">Order #${order.id
+                              .substring(0, 8)
+                              .toUpperCase()}</div>
+                            <div class="order-status status-${order.status.replace(
+                              / /g,
+                              "-"
+                            )}">${order.status}</div>
+                        </div>
+                        
+                        <div class="order-date">
+                            Ordered on ${orderDate}
+                        </div>
+                        
+                        <div class="order-items">
+                            <h4>Items (${order.items.length}):</h4>
+                            <ul class="item-list">${itemsHTML}</ul>
+                        </div>
+                        
+                        <div class="order-summary">
+                            <div class="delivery-address">
+                                <h5>Delivery Address:</h5>
+                                <p>${addressHTML}</p>
+                                <p>${address.phone}</p>
+                            </div>
+                            
+                            <div class="order-total">
+                                <h5>Order Total:</h5>
+                                <div class="total-amount">₹${
+                                  order.totalAmount
+                                }</div>
+                            </div>
+                        </div>
+                    `;
+
+            ordersContainer.appendChild(orderCard);
+          });
+
+          console.log(`✅ Successfully rendered ${orders.length} orders`);
+        } catch (error) {
+          console.error("❌ Detailed error loading orders:", error);
+          console.error("❌ Error code:", error.code);
+          console.error("❌ Error message:", error.message);
+
+          let errorMessage = "Unable to load your orders. Please try again.";
+
+          if (error.code === "permission-denied") {
+            errorMessage =
+              "Permission denied. Please check Firestore security rules.";
+          } else if (error.code === "failed-precondition") {
+            errorMessage =
+              "Database index missing. Please create required indexes.";
+          }
+
+          document.getElementById("orders-content").innerHTML = `
+                    <div class="empty-orders">
+                        <h3>Error Loading Orders</h3>
+                        <p>${errorMessage}</p>
+                        <p><small>Error: ${error.message}</small></p>
+                        <button onclick="location.reload()" class="order-now-btn">Retry</button>
+                    </div>
+                `;
+        }
+      }
+
+      console.log("📦 Orders page loaded successfully!");
+    </script>
+  </body>
+</html>

@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Menu - Hotel Lee</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+      }
+
+      /* Fixed Header Layout - Proper Distribution */
+      .main-header {
+        background: #e74c3c;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 20px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+
+      /* Left Section - Hamburger Menu */
+      .header-left {
+        display: flex;
+        justify-content: flex-start;
+        flex: 0 0 auto;
+      }
+
+      .hamburger-menu {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 4px;
+        transition: background 0.2s ease;
+      }
+
+      .hamburger-menu:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .line {
+        width: 22px;
+        height: 2px;
+        background: white;
+        margin: 4px 0;
+        border-radius: 2px;
+        transition: 0.3s;
+      }
+
+      .hamburger-menu.active .line:nth-child(1) {
+        transform: rotate(-45deg) translate(-4px, 4px);
+      }
+
+      .hamburger-menu.active .line:nth-child(2) {
+        opacity: 0;
+      }
+
+      .hamburger-menu.active .line:nth-child(3) {
+        transform: rotate(45deg) translate(-4px, -4px);
+      }
+
+      /* Center Section - Page Title */
+      .header-center {
+        display: flex;
+        justify-content: center;
+        flex: 1;
+        margin: 0 20px;
+      }
+
+      .page-title {
+        color: white;
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+      }
+
+      /* Right Section - Cart & Profile */
+      .header-right {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        flex: 0 0 auto;
+      }
+
+      .icon-btn {
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        position: relative;
+        flex-shrink: 0;
+      }
+
+      .icon-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-1px);
+      }
+
+      .icon-btn:active {
+        transform: translateY(0);
+      }
+
+      /* Cart Icon */
+      .cart-icon {
+        position: relative;
+        width: 20px;
+        height: 20px;
+      }
+
+      .cart-body {
+        width: 16px;
+        height: 12px;
+        border: 2px solid white;
+        border-top: none;
+        border-radius: 0 0 2px 2px;
+        position: absolute;
+        bottom: 0;
+        left: 2px;
+      }
+
+      .cart-handle {
+        width: 20px;
+        height: 8px;
+        border: 2px solid white;
+        border-bottom: none;
+        border-radius: 8px 8px 0 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      .cart-count {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #f39c12;
+        color: white;
+        font-size: 10px;
+        font-weight: bold;
+        padding: 2px 6px;
+        border-radius: 10px;
+        min-width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+      }
+
+      .cart-count:empty,
+      .cart-count[data-count="0"] {
+        display: none;
+      }
+
+      /* Profile Icon */
+      .profile-icon {
+        width: 20px;
+        height: 20px;
+        background: white;
+        border-radius: 50%;
+        position: relative;
+      }
+
+      .profile-icon::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        background: #e74c3c;
+        border-radius: 50%;
+        position: absolute;
+        top: 2px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .profile-icon::after {
+        content: "";
+        width: 14px;
+        height: 8px;
+        background: #e74c3c;
+        border-radius: 8px 8px 0 0;
+        position: absolute;
+        bottom: 1px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      /* Navigation Dropdown - ONLY MENU ITEMS */
+      .nav-dropdown {
+        background: #c0392b;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+
+      .nav-dropdown.open {
+        max-height: 150px;
+      }
+
+      .nav-link {
+        display: block;
+        color: white;
+        text-decoration: none;
+        padding: 12px 20px;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .nav-link:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .nav-link.active {
+        background: rgba(255, 255, 255, 0.2);
+        font-weight: 600;
+      }
+
+      .nav-link:last-child {
+        border-bottom: none;
+      }
+
+      /* Main Content Styles */
+      main {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+
+      .welcome-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Category Button Styles */
+      .category-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .category-buttons {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 0.5rem;
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+      }
+
+      .category-btn {
+        background: #ecf0f1;
+        color: #2c3e50;
+        border: 1px solid #bdc3c7;
+        padding: 0.35rem 0.9rem;
+        border-radius: 18px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        min-width: 70px;
+        white-space: nowrap;
+      }
+
+      .category-btn:hover {
+        background: #d5dbdb;
+        border-color: #95a5a6;
+      }
+
+      .category-btn.active {
+        background: #e74c3c;
+        color: white;
+        border-color: #c0392b;
+      }
+
+      .category-btn.active:hover {
+        background: #c0392b;
+      }
+
+      .search-section {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .search-box {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid #ecf0f1;
+        border-radius: 8px;
+        font-size: 1rem;
+      }
+
+      .search-box:focus {
+        outline: none;
+        border-color: #e74c3c;
+      }
+
+      .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+
+      .menu-item {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .menu-item:hover {
+        transform: translateY(-5px);
+      }
+
+      .menu-item img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+
+      .menu-item-content {
+        padding: 1.5rem;
+      }
+
+      .menu-item h3 {
+        margin: 0 0 0.5rem 0;
+        color: #2c3e50;
+        font-size: 1.2rem;
+      }
+
+      .menu-item p {
+        margin: 0 0 1rem 0;
+        color: #7f8c8d;
+        font-size: 0.9rem;
+      }
+
+      .item-price {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #e74c3c;
+        margin-bottom: 1rem;
+      }
+
+      .add-to-cart-btn {
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 6px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 1rem;
+        transition: background 0.3s ease;
+      }
+
+      .add-to-cart-btn:hover {
+        background: #219a52;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 3rem;
+        color: #7f8c8d;
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
+        .header-container {
+          padding: 12px 16px;
+        }
+
+        .page-title {
+          font-size: 18px;
+        }
+
+        .header-center {
+          margin: 0 12px;
+        }
+
+        .icon-btn {
+          width: 36px;
+          height: 36px;
+        }
+
+        .header-right {
+          gap: 6px;
+        }
+
+        .category-buttons {
+          justify-content: flex-start;
+        }
+
+        .category-btn {
+          min-width: auto;
+          padding: 0.6rem 1rem;
+          font-size: 0.9rem;
+        }
+
+        .menu-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .page-title {
+          font-size: 16px;
+        }
+
+        .header-center {
+          margin: 0 8px;
+        }
+
+        .icon-btn {
+          width: 34px;
+          height: 34px;
+        }
+
+        .header-right {
+          gap: 4px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="main-header">
+      <div class="header-container">
+        <!-- LEFT: Hamburger Menu -->
+        <div class="header-left">
+          <button class="hamburger-menu" id="hamburger-menu">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+          </button>
+        </div>
+
+        <!-- CENTER: App Title -->
+        <div class="header-center">
+          <h1 class="page-title">Hotel Lee</h1>
+        </div>
+
+        <!-- RIGHT: Cart & Profile -->
+        <div class="header-right">
+          <button class="icon-btn cart-button" id="cart-button">
+            <div class="cart-icon">
+              <div class="cart-body"></div>
+              <div class="cart-handle"></div>
+              <span class="cart-count" id="cart-count">0</span>
+            </div>
+          </button>
+
+          <button
+            class="icon-btn profile-button"
+            onclick="window.location.href='profile.html'"
+          >
+            <div class="profile-icon"></div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dropdown Navigation - ONLY NAVIGATION LINKS -->
+      <nav class="nav-dropdown" id="nav-dropdown">
+        <a href="menu.html" class="nav-link active">Menu</a>
+        <a href="orders.html" class="nav-link">Orders</a>
+        <button class="nav-link logout-link" id="logout-link">Logout</button>
+      </nav>
+    </header>
+
+    <main>
+      <div class="welcome-section">
+        <h2>Welcome to Hotel Lee!</h2>
+        <p>Delicious food delivered to your doorstep</p>
+      </div>
+
+      <!-- Category Buttons Section -->
+      <div class="category-section">
+        <h3>Categories</h3>
+        <div class="category-buttons" id="category-buttons">
+          <button class="category-btn active" data-category="all">All</button>
+        </div>
+      </div>
+
+      <div class="search-section">
+        <input
+          type="text"
+          class="search-box"
+          id="search-box"
+          placeholder="Search for food items..."
+        />
+      </div>
+
+      <div id="menu-items" class="menu-grid">
+        <div class="loading">Loading delicious food...</div>
+      </div>
+    </main>
+
+    <script type="module">
+      // Import Firebase functions
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+      import {
+        getAuth,
+        signOut,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+      // Your Firebase config
+      const firebaseConfig = {
+        apiKey: "AIzaSyBMACWaT2ESi5A-q2vzBeNdWJZQDvDYOfk",
+        authDomain: "hotel-lee.firebaseapp.com",
+        projectId: "hotel-lee",
+        storageBucket: "hotel-lee.firebasestorage.app",
+        messagingSenderId: "763270960235",
+        appId: "1:763270960235:web:5343e8f87976424642cd2e",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      let currentUser = null;
+      let cart = [];
+      let allMenuItems = [];
+      let allCategories = [];
+      let activeCategory = "all";
+
+      // Header functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        const hamburgerMenu = document.getElementById("hamburger-menu");
+        const navDropdown = document.getElementById("nav-dropdown");
+        const cartButton = document.getElementById("cart-button");
+        const logoutLink = document.getElementById("logout-link");
+
+        // Toggle navigation menu
+        hamburgerMenu.addEventListener("click", function () {
+          hamburgerMenu.classList.toggle("active");
+          navDropdown.classList.toggle("open");
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener("click", function (e) {
+          if (
+            !hamburgerMenu.contains(e.target) &&
+            !navDropdown.contains(e.target)
+          ) {
+            hamburgerMenu.classList.remove("active");
+            navDropdown.classList.remove("open");
+          }
+        });
+
+        // Cart button
+        cartButton.addEventListener("click", function () {
+          window.location.href = "cart.html";
+        });
+
+        // Logout functionality
+        logoutLink.addEventListener("click", async function () {
+          if (confirm("Are you sure you want to logout?")) {
+            try {
+              await signOut(auth);
+              localStorage.removeItem("cart");
+              window.location.href = "../index.html";
+            } catch (error) {
+              console.error("Logout error:", error);
+            }
+          }
+        });
+      });
+
+      // Check authentication
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          currentUser = user;
+          console.log("✅ User logged in:", user.email);
+
+          // Handle admin access
+          if (user.email === "admin@lee.com") {
+            showAdminBanner();
+          }
+
+          loadMenuData();
+        } else {
+          console.log("❌ No user logged in, redirecting...");
+          window.location.href = "../index.html";
+        }
+      });
+
+      // Show admin banner for admin users
+      function showAdminBanner() {
+        const adminBanner = document.createElement("div");
+        adminBanner.style.cssText = `
+                background: #2c3e50;
+                color: white;
+                padding: 0.8rem;
+                text-align: center;
+                font-weight: bold;
+                position: sticky;
+                top: 0;
+                z-index: 999;
+            `;
+        adminBanner.innerHTML = `
+                Admin Mode Active | 
+                <button onclick="window.location.href='../admin/dashboard.html'" style="background:#e74c3c;color:white;border:none;padding:0.3rem 0.8rem;border-radius:3px;margin:0 0.5rem;cursor:pointer;">Go to Admin Panel</button>
+                <button onclick="adminLogout()" style="background:#95a5a6;color:white;border:none;padding:0.3rem 0.8rem;border-radius:3px;cursor:pointer;">Logout</button>
+            `;
+        document.body.insertBefore(adminBanner, document.body.firstChild);
+      }
+
+      // Admin logout
+      window.adminLogout = async function () {
+        try {
+          await signOut(auth);
+          window.location.href = "../index.html";
+        } catch (error) {
+          console.error("Logout error:", error);
+        }
+      };
+
+      // Load menu data and categories
+      async function loadMenuData() {
+        try {
+          console.log("Loading menu data...");
+
+          // Load categories
+          const categoriesSnapshot = await getDocs(
+            collection(db, "categories")
+          );
+          allCategories = [];
+          categoriesSnapshot.forEach((doc) => {
+            allCategories.push({ id: doc.id, ...doc.data() });
+          });
+
+          // Load menu items
+          const menuSnapshot = await getDocs(collection(db, "menuItems"));
+          allMenuItems = [];
+          menuSnapshot.forEach((doc) => {
+            const item = { id: doc.id, ...doc.data() };
+            if (item.isAvailable) {
+              allMenuItems.push(item);
+            }
+          });
+
+          console.log(
+            "Loaded",
+            allMenuItems.length,
+            "menu items and",
+            allCategories.length,
+            "categories"
+          );
+
+          // Update category buttons with dynamic categories
+          updateCategoryButtons();
+
+          // Display all items initially
+          displayMenuItems(allMenuItems);
+
+          // Update cart counter
+          updateCartCounter();
+        } catch (error) {
+          console.error("Error loading menu:", error);
+          document.getElementById("menu-items").innerHTML =
+            '<div class="loading">Error loading menu. Please refresh the page.</div>';
+        }
+      }
+
+      // Update category buttons dynamically
+      function updateCategoryButtons() {
+        const categoryContainer = document.getElementById("category-buttons");
+
+        // Clear existing buttons except "All"
+        categoryContainer.innerHTML =
+          '<button class="category-btn active" data-category="all">All</button>';
+
+        // Add dynamic categories from database only
+        allCategories.forEach((category) => {
+          const button = document.createElement("button");
+          button.className = "category-btn";
+          button.setAttribute("data-category", category.id);
+          button.textContent = category.name;
+          categoryContainer.appendChild(button);
+        });
+
+        // Add click handlers to category buttons
+        document.querySelectorAll(".category-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const category = btn.getAttribute("data-category");
+            filterByCategory(category);
+
+            // Update active state
+            document
+              .querySelectorAll(".category-btn")
+              .forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+          });
+        });
+      }
+
+      // Filter items by category
+      function filterByCategory(category) {
+        activeCategory = category;
+
+        if (category === "all") {
+          displayMenuItems(allMenuItems);
+        } else {
+          const filteredItems = allMenuItems.filter((item) => {
+            // Check if item has categories array or single categoryId
+            if (item.categories && Array.isArray(item.categories)) {
+              return item.categories.includes(category);
+            } else if (item.categoryId) {
+              return item.categoryId === category;
+            }
+            return false;
+          });
+          displayMenuItems(filteredItems);
+        }
+      }
+
+      // Display menu items
+      function displayMenuItems(items) {
+        const container = document.getElementById("menu-items");
+
+        if (items.length === 0) {
+          container.innerHTML =
+            '<div class="loading">No items found in this category.</div>';
+          return;
+        }
+
+        container.innerHTML = "";
+
+        items.forEach((item) => {
+          const menuItemDiv = document.createElement("div");
+          menuItemDiv.className = "menu-item";
+          menuItemDiv.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" referrerpolicy="no-referrer">
+                    <div class="menu-item-content">
+                        <h3>${item.name}</h3>
+                        <p>${item.description}</p>
+                        <div class="item-price">₹${item.price}</div>
+                        <button class="add-to-cart-btn" onclick="addToCart('${item.id}', '${item.name}', ${item.price}, '${item.image}', '${item.description}')">
+                            Add to Cart
+                        </button>
+                    </div>
+                `;
+          container.appendChild(menuItemDiv);
+        });
+      }
+
+      // Search functionality
+      document.getElementById("search-box").addEventListener("input", (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+
+        let itemsToFilter =
+          activeCategory === "all"
+            ? allMenuItems
+            : allMenuItems.filter((item) => {
+                if (item.categories && Array.isArray(item.categories)) {
+                  return item.categories.includes(activeCategory);
+                } else if (item.categoryId) {
+                  return item.categoryId === activeCategory;
+                }
+                return false;
+              });
+
+        const filteredItems = itemsToFilter.filter(
+          (item) =>
+            item.name.toLowerCase().includes(searchTerm) ||
+            item.description.toLowerCase().includes(searchTerm)
+        );
+
+        displayMenuItems(filteredItems);
+      });
+
+      // Load cart from localStorage
+      function loadCart() {
+        const savedCart = localStorage.getItem("cart");
+        if (savedCart) {
+          cart = JSON.parse(savedCart);
+        }
+      }
+
+      // Add to cart functionality
+      window.addToCart = function (id, name, price, image, description) {
+        const existingItem = cart.find((item) => item.id === id);
+
+        if (existingItem) {
+          existingItem.quantity += 1;
+        } else {
+          cart.push({
+            id: id,
+            name: name,
+            price: price,
+            image: image,
+            description: description,
+            quantity: 1,
+          });
+        }
+
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartCounter();
+
+        // Show success message
+        alert(`${name} added to cart!`);
+      };
+
+      // Update cart counter
+      function updateCartCounter() {
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const cartCountElement = document.getElementById("cart-count");
+        if (cartCountElement) {
+          cartCountElement.textContent = totalItems;
+          cartCountElement.setAttribute("data-count", totalItems);
+        }
+      }
+
+      // Initialize
+      loadCart();
+      console.log("Menu page loaded successfully!");
+    </script>
+  </body>
+</html>

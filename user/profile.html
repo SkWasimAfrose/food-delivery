@@ -490,6 +490,22 @@
         font-size: 1rem;
       }
 
+      /* Loading State */
+      .loading-message {
+        text-align: center;
+        color: #7f8c8d;
+        font-style: italic;
+      }
+
+      .error-message {
+        background: #ffebee;
+        color: #c62828;
+        padding: 1rem;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+        border: 1px solid #ffcdd2;
+      }
+
       /* Mobile Responsive */
       @media (max-width: 768px) {
         .header-container {
@@ -551,22 +567,21 @@
           gap: 4px;
         }
       }
+
       /* TARGETED HEADER BUTTON FIX - Mobile Only */
       @media (max-width: 768px) {
-        /* Only fix header buttons - don't touch other elements */
         .header-right {
-          gap: 12px !important; /* Force better spacing */
-          margin-right: 4px; /* Small margin from edge */
+          gap: 12px !important;
+          margin-right: 4px;
         }
 
         .icon-btn {
           width: 38px !important;
           height: 38px !important;
-          min-width: 38px; /* Prevent shrinking */
+          min-width: 38px;
           border-radius: 6px !important;
         }
 
-        /* Better cart icon proportions */
         .cart-icon {
           width: 18px !important;
           height: 18px !important;
@@ -675,6 +690,11 @@
           <!-- Personal Info Tab -->
           <div class="tab-pane active" id="personal">
             <h3>Personal Information</h3>
+            <div
+              id="profile-error"
+              class="error-message"
+              style="display: none"
+            ></div>
             <form id="profile-form">
               <div class="form-row">
                 <div class="form-group">
@@ -897,6 +917,23 @@
       let userProfile = null;
       let editingAddressIndex = null;
 
+      // Show error message
+      function showError(message) {
+        const errorDiv = document.getElementById("profile-error");
+        if (errorDiv) {
+          errorDiv.textContent = message;
+          errorDiv.style.display = "block";
+        }
+      }
+
+      // Hide error message
+      function hideError() {
+        const errorDiv = document.getElementById("profile-error");
+        if (errorDiv) {
+          errorDiv.style.display = "none";
+        }
+      }
+
       // Header functionality
       document.addEventListener("DOMContentLoaded", function () {
         const hamburgerMenu = document.getElementById("hamburger-menu");
@@ -999,49 +1036,84 @@
         });
       });
 
-      // Load user profile data
+      // Load user profile data - IMPROVED WITH BETTER ERROR HANDLING
       async function loadUserProfile() {
         try {
-          console.log("👤 Loading user profile...");
+          console.log("👤 Loading user profile for UID:", currentUser.uid);
+          hideError();
 
-          const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-          if (userDoc.exists()) {
+          // Try to get user document with retry logic
+          let userDoc = null;
+          let retryCount = 0;
+          const maxRetries = 3;
+
+          while (retryCount < maxRetries) {
+            try {
+              userDoc = await getDoc(doc(db, "users", currentUser.uid));
+              console.log("📄 User document exists:", userDoc.exists());
+              break;
+            } catch (error) {
+              retryCount++;
+              console.warn(`⚠️ Attempt ${retryCount} failed:`, error);
+              if (retryCount >= maxRetries) throw error;
+              await new Promise((resolve) => setTimeout(resolve, 1000));
+            }
+          }
+
+          if (userDoc && userDoc.exists()) {
             userProfile = userDoc.data();
             console.log("✅ User profile loaded:", userProfile);
 
-            // Update profile header
-            const initials = userProfile.fullName
-              ? userProfile.fullName
+            // Update profile header with null checks
+            const fullName = userProfile.fullName || "";
+            const initials = fullName
+              ? fullName
                   .split(" ")
                   .map((n) => n[0])
                   .join("")
                   .toUpperCase()
+              : currentUser.email
+              ? currentUser.email[0].toUpperCase()
               : "U";
-            document.getElementById("profile-avatar").textContent = initials;
-            document.getElementById("profile-display-name").textContent =
-              userProfile.fullName || "User";
-            document.getElementById("profile-email").textContent =
-              currentUser.email;
 
-            // Fill form fields
-            document.getElementById("full-name").value =
-              userProfile.fullName || "";
-            document.getElementById("email").value = currentUser.email;
-            document.getElementById("phone").value =
-              userProfile.phoneNumber || "";
+            // Update UI elements safely
+            const avatarEl = document.getElementById("profile-avatar");
+            const nameEl = document.getElementById("profile-display-name");
+            const emailEl = document.getElementById("profile-email");
+
+            if (avatarEl) avatarEl.textContent = initials;
+            if (nameEl) nameEl.textContent = fullName || "User";
+            if (emailEl) emailEl.textContent = currentUser.email;
+
+            // Fill form fields safely
+            const fullNameInput = document.getElementById("full-name");
+            const emailInput = document.getElementById("email");
+            const phoneInput = document.getElementById("phone");
+            const joinedDateInput = document.getElementById("joined-date");
+
+            if (fullNameInput) fullNameInput.value = userProfile.fullName || "";
+            if (emailInput) emailInput.value = currentUser.email || "";
+            if (phoneInput) phoneInput.value = userProfile.phoneNumber || "";
 
             // Format and show join date
-            const joinDate = userProfile.createdAt
-              ? new Date(userProfile.createdAt).toLocaleDateString("en-IN", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })
-              : "Unknown";
-            document.getElementById("joined-date").value = joinDate;
+            if (joinedDateInput) {
+              const joinDate = userProfile.createdAt
+                ? new Date(userProfile.createdAt).toLocaleDateString("en-IN", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                : "Unknown";
+              joinedDateInput.value = joinDate;
+            }
+
+            console.log("✅ Profile UI updated successfully");
           } else {
-            console.log("⚠️ User profile not found, creating...");
-            // Create basic profile
+            console.log(
+              "⚠️ User profile not found, creating default profile..."
+            );
+
+            // Create basic profile with current user data
             userProfile = {
               uid: currentUser.uid,
               email: currentUser.email,
@@ -1049,15 +1121,39 @@
               phoneNumber: "",
               addresses: [],
               createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              isActive: true,
             };
-            await setDoc(doc(db, "users", currentUser.uid), userProfile);
+
+            try {
+              await setDoc(doc(db, "users", currentUser.uid), userProfile);
+              console.log("✅ Default profile created");
+
+              // Reload profile after creating
+              setTimeout(() => loadUserProfile(), 1000);
+            } catch (createError) {
+              console.error("❌ Error creating default profile:", createError);
+              showError(
+                "Failed to create profile. Please try refreshing the page."
+              );
+            }
           }
         } catch (error) {
           console.error("❌ Error loading user profile:", error);
+          showError(
+            "Failed to load profile data. Please check your internet connection and try refreshing the page."
+          );
+
+          // Set basic fallback values
+          const emailEl = document.getElementById("profile-email");
+          if (emailEl) emailEl.textContent = currentUser?.email || "Unknown";
+
+          const nameEl = document.getElementById("profile-display-name");
+          if (nameEl) nameEl.textContent = "User";
         }
       }
 
-      // Load user orders
+      // Load user orders - Same as before but with better error handling
       async function loadUserOrders() {
         try {
           console.log("📦 Loading user orders...");
@@ -1079,18 +1175,11 @@
           ordersContainer.innerHTML = "";
           const orders = [];
 
-          // Convert to array and sort manually
           querySnapshot.forEach((doc) => {
-            orders.push({
-              id: doc.id,
-              ...doc.data(),
-            });
+            orders.push({ id: doc.id, ...doc.data() });
           });
 
-          // Sort by date (newest first)
           orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
-
-          console.log("📊 Found", orders.length, "orders");
 
           orders.forEach((order) => {
             const orderCard = document.createElement("div");
@@ -1141,11 +1230,11 @@
 
           console.log("✅ Orders loaded successfully");
         } catch (error) {
-          console.error("❌ Detailed error loading orders:", error);
+          console.error("❌ Error loading orders:", error);
 
           const ordersContainer = document.getElementById("orders-list");
           ordersContainer.innerHTML = `
-                    <div style="padding: 1rem; background: #ffe6e6; border-radius: 8px; color: #721c24;">
+                    <div class="error-message">
                         <p><strong>Error loading orders:</strong></p>
                         <p>${error.message}</p>
                         <button onclick="loadUserOrders()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer;">
@@ -1156,19 +1245,25 @@
         }
       }
 
-      // Load user addresses
+      // Load user addresses - Same as before
       function loadUserAddresses() {
         const addressContainer = document.getElementById("address-list");
-        if (!userProfile.addresses || userProfile.addresses.length === 0) {
+        if (
+          !userProfile ||
+          !userProfile.addresses ||
+          userProfile.addresses.length === 0
+        ) {
           addressContainer.innerHTML =
             '<p style="color:#7f8c8d; text-align:center; padding:2rem;">No saved addresses. Add your first delivery address!</p>';
           return;
         }
+
         addressContainer.innerHTML = "";
         userProfile.addresses.forEach((address, index) => {
           const addressCard = document.createElement("div");
           addressCard.className = "address-card";
           if (index === 0) addressCard.classList.add("primary");
+
           addressCard.innerHTML = `
                     <div class="address-actions">
                         <button onclick="editAddress(${index})">Edit</button>
@@ -1197,24 +1292,39 @@
         });
       }
 
-      // Update profile form submission
+      // Update profile form submission - IMPROVED
       document
         .getElementById("profile-form")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
 
           const updateBtn = document.getElementById("update-profile-btn");
+          const originalText = updateBtn.textContent;
           updateBtn.textContent = "Updating...";
           updateBtn.disabled = true;
+          hideError();
 
           try {
+            const fullNameValue = document
+              .getElementById("full-name")
+              .value.trim();
+            const phoneValue = document.getElementById("phone").value.trim();
+
+            if (!fullNameValue || !phoneValue) {
+              showError("Please fill in both name and phone number.");
+              return;
+            }
+
             const updatedData = {
-              fullName: document.getElementById("full-name").value,
-              phoneNumber: document.getElementById("phone").value,
+              fullName: fullNameValue,
+              phoneNumber: phoneValue,
               updatedAt: new Date().toISOString(),
             };
 
+            console.log("💾 Updating profile with:", updatedData);
+
             await updateDoc(doc(db, "users", currentUser.uid), updatedData);
+            console.log("✅ Profile updated successfully");
 
             // Update local profile data
             userProfile.fullName = updatedData.fullName;
@@ -1228,21 +1338,24 @@
                   .join("")
                   .toUpperCase()
               : "U";
-            document.getElementById("profile-avatar").textContent = initials;
-            document.getElementById("profile-display-name").textContent =
-              userProfile.fullName;
+
+            const avatarEl = document.getElementById("profile-avatar");
+            const nameEl = document.getElementById("profile-display-name");
+
+            if (avatarEl) avatarEl.textContent = initials;
+            if (nameEl) nameEl.textContent = userProfile.fullName;
 
             alert("Profile updated successfully!");
           } catch (error) {
             console.error("❌ Error updating profile:", error);
-            alert("Error updating profile: " + error.message);
+            showError("Error updating profile: " + error.message);
           } finally {
-            updateBtn.textContent = "Update Profile";
+            updateBtn.textContent = originalText;
             updateBtn.disabled = false;
           }
         });
 
-      // Address modal functionality
+      // Address modal functionality - Same as before
       document
         .getElementById("add-address-btn")
         .addEventListener("click", () => {
@@ -1267,7 +1380,7 @@
           }
         });
 
-      // Address form submission
+      // Address form submission - Same as before
       document
         .getElementById("address-form")
         .addEventListener("submit", async (e) => {
@@ -1275,6 +1388,7 @@
           const saveBtn = document.getElementById("save-address");
           saveBtn.textContent = "Saving...";
           saveBtn.disabled = true;
+
           try {
             const addressData = {
               name: document.getElementById("address-name").value,

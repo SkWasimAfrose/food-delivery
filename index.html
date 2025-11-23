@@ -150,17 +150,40 @@
 
   <script type="module">
     // Import Firebase configuration and services
-    import { auth, onAuthStateChanged } from "./js/firebase-config.js";
+    import { auth, db, onAuthStateChanged, doc, getDoc } from "./js/firebase-config.js";
     import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
     console.log("🔥 Firebase initialized successfully!");
+
+    // Helper function to check if user exists in Firestore and redirect accordingly
+    async function checkUserAndRedirect(user) {
+      try {
+        console.log("🔍 Checking if user profile exists for:", user.uid);
+        const userDocRef = doc(db, "users", user.uid);
+        const userSnapshot = await getDoc(userDocRef);
+
+        if (userSnapshot.exists()) {
+          console.log("✅ User profile found. Redirecting to menu...");
+          window.location.href = "user/menu.html";
+        } else {
+          console.log("⚠️ User profile NOT found. Redirecting to setup profile...");
+          window.location.href = "setup-profile.html";
+        }
+      } catch (error) {
+        console.error("❌ Error checking user existence:", error);
+        const errorDiv = document.getElementById("error-message");
+        if (errorDiv) {
+          errorDiv.textContent = "Login verification failed: " + error.message;
+          errorDiv.style.display = "block";
+        }
+      }
+    }
 
     // Check if user is already logged in
     onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log("🔒 User already logged in:", user.email);
-        // Redirect to menu page
-        window.location.href = "user/menu.html";
+        checkUserAndRedirect(user);
       } else {
         console.log("👤 No user logged in");
       }
@@ -179,8 +202,8 @@
         const user = result.user;
         console.log("✅ User signed in:", user.displayName, user.email);
 
-        // Redirect to profile setup to ensure phone number is collected
-        window.location.href = "setup-profile.html";
+        // Perform existence check instead of direct redirect
+        await checkUserAndRedirect(user);
 
       } catch (error) {
         console.error("❌ Google Sign-In Error:", error);

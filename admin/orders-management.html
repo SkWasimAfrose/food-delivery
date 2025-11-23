@@ -1,435 +1,455 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Orders Management - Hotel Lee Admin</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body {
-        font-family: Arial, sans-serif;
-        background: #f8f9fa;
-        color: #2c3e50;
-      }
-      .admin-header {
-        background: #2c3e50;
-        color: white;
-        padding: 1rem 2rem;
-        display: flex;
-        justify-content: space-between;
-      }
-      .admin-nav {
-        background: #34495e;
-      }
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Orders Management - Hotel Lee Admin</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      color: #2c3e50;
+    }
+
+    .admin-header {
+      background: #2c3e50;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .admin-nav {
+      background: #34495e;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+    }
+
+    .nav-links li {
+      border-right: 1px solid #2c3e50;
+    }
+
+    .nav-links li:last-child {
+      border-right: none;
+    }
+
+    .nav-links a {
+      display: block;
+      color: white;
+      padding: 1rem 1.5rem;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      background: #2c3e50;
+    }
+
+    .logout-btn {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
       .nav-links {
-        display: flex;
-        list-style: none;
+        flex-direction: column;
       }
+
       .nav-links li {
-        border-right: 1px solid #2c3e50;
-      }
-      .nav-links li:last-child {
         border-right: none;
+        border-bottom: 1px solid #2c3e50;
       }
-      .nav-links a {
-        display: block;
-        color: white;
-        padding: 1rem 1.5rem;
-        text-decoration: none;
-        transition: background 0.2s;
-      }
-      .nav-links a:hover,
-      .nav-links a.active {
-        background: #2c3e50;
-      }
-      .logout-btn {
-        background: #e74c3c;
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-      @media (max-width: 768px) {
-        .nav-links {
-          flex-direction: column;
-        }
-        .nav-links li {
-          border-right: none;
-          border-bottom: 1px solid #2c3e50;
-        }
-      }
-      main {
-        max-width: 1400px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        background: white;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-      th,
-      td {
-        padding: 1rem;
-        text-align: left;
-        border-bottom: 1px solid #ecf0f1;
-        vertical-align: top;
-      }
-      th {
-        background: #ecf0f1;
-        font-weight: 600;
-      }
-      .status-select {
-        padding: 0.3rem;
-        border-radius: 4px;
-        border: 1px solid #ddd;
-      }
-      .user-link {
-        color: #3498db;
-        cursor: pointer;
-        text-decoration: underline;
-        font-weight: 500;
-      }
-      .user-link:hover {
-        color: #2980b9;
-      }
-      .address-info {
-        display: none;
-        background: #f8f9fa;
-        padding: 1rem;
-        margin: 0.5rem 0;
-        border-radius: 5px;
-        border-left: 3px solid #3498db;
-      }
-      .order-items {
-        font-size: 0.9rem;
-      }
-      .order-items ul {
-        margin: 0;
-        padding-left: 1.2rem;
-      }
-      .order-items li {
-        margin: 0.2rem 0;
-        padding: 0.2rem 0;
-        border-bottom: 1px dotted #ddd;
-      }
-      .order-items li:last-child {
-        border-bottom: none;
-      }
-      .update-btn {
-        background: #27ae60;
-        color: white;
-        border: none;
-        padding: 0.4rem 0.8rem;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      .update-btn:hover {
-        background: #219a52;
-      }
-      .update-btn:disabled {
-        background: #bdc3c7;
-        cursor: not-allowed;
-      }
-      .loading {
-        text-align: center;
-        padding: 2rem;
-        color: #7f8c8d;
-      }
-      .customer-email {
-        font-size: 0.8rem;
-        color: #7f8c8d;
-        display: block;
-      }
-    </style>
-  </head>
-  <body>
-    <header class="admin-header">
-      <h1>🏨 Hotel Lee Admin Dashboard</h1>
-      <button class="logout-btn" id="logout-btn">Logout</button>
-    </header>
-    <nav class="admin-nav">
-      <ul class="nav-links">
-        <li><a href="dashboard.html">📊 Dashboard</a></li>
-        <li><a href="orders-management.html" class="active">📦 Orders</a></li>
-        <li><a href="users.html">👥 Users</a></li>
-        <li><a href="menu-management.html">🍕 Menu</a></li>
-      </ul>
-    </nav>
-    <main>
-      <h2>📦 Orders Management</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Order ID</th>
-            <th>Customer</th>
-            <th>Items</th>
-            <th>Amount</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="orders-body">
-          <tr>
-            <td colspan="7" class="loading">Loading orders...</td>
-          </tr>
-        </tbody>
-      </table>
-    </main>
+    }
 
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-      import {
-        getAuth,
-        onAuthStateChanged,
-        signOut,
-      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-      import {
-        getFirestore,
-        collection,
-        getDocs,
-        updateDoc,
-        doc,
-        getDoc,
-      } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    main {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyBMACWaT2ESi5A-q2vzBeNdWJZQDvDYOfk",
-        authDomain: "hotel-lee.firebaseapp.com",
-        projectId: "hotel-lee",
-        storageBucket: "hotel-lee.firebasestorage.app",
-        messagingSenderId: "763270960235",
-        appId: "1:763270960235:web:5343e8f87976424642cd2e",
-      };
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
-      const db = getFirestore(app);
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-      onAuthStateChanged(auth, (user) => {
-        if (!user || user.email !== "admin@lee.com") {
-          console.log("❌ Not authorized as admin");
-          window.location.href = "login.html";
+    th,
+    td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #ecf0f1;
+      vertical-align: top;
+    }
+
+    th {
+      background: #ecf0f1;
+      font-weight: 600;
+    }
+
+    .status-select {
+      padding: 0.3rem;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+    }
+
+    .user-link {
+      color: #3498db;
+      cursor: pointer;
+      text-decoration: underline;
+      font-weight: 500;
+    }
+
+    .user-link:hover {
+      color: #2980b9;
+    }
+
+    .address-info {
+      display: none;
+      background: #f8f9fa;
+      padding: 1rem;
+      margin: 0.5rem 0;
+      border-radius: 5px;
+      border-left: 3px solid #3498db;
+    }
+
+    .order-items {
+      font-size: 0.9rem;
+    }
+
+    .order-items ul {
+      margin: 0;
+      padding-left: 1.2rem;
+    }
+
+    .order-items li {
+      margin: 0.2rem 0;
+      padding: 0.2rem 0;
+      border-bottom: 1px dotted #ddd;
+    }
+
+    .order-items li:last-child {
+      border-bottom: none;
+    }
+
+    .update-btn {
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .update-btn:hover {
+      background: #219a52;
+    }
+
+    .update-btn:disabled {
+      background: #bdc3c7;
+      cursor: not-allowed;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #7f8c8d;
+    }
+
+    .customer-email {
+      font-size: 0.8rem;
+      color: #7f8c8d;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="admin-header">
+    <h1>🏨 Hotel Lee Admin Dashboard</h1>
+    <button class="logout-btn" id="logout-btn">Logout</button>
+  </header>
+  <nav class="admin-nav">
+    <ul class="nav-links">
+      <li><a href="dashboard.html">📊 Dashboard</a></li>
+      <li><a href="orders-management.html" class="active">📦 Orders</a></li>
+      <li><a href="users.html">👥 Users</a></li>
+      <li><a href="menu-management.html">🍕 Menu</a></li>
+    </ul>
+  </nav>
+  <main>
+    <h2>📦 Orders Management</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Customer</th>
+          <th>Items</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="orders-body">
+        <tr>
+          <td colspan="7" class="loading">Loading orders...</td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut,
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      updateDoc,
+      doc,
+      getDoc,
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBMACWaT2ESi5A-q2vzBeNdWJZQDvDYOfk",
+      authDomain: "hotel-lee.firebaseapp.com",
+      projectId: "hotel-lee",
+      storageBucket: "hotel-lee.firebasestorage.app",
+      messagingSenderId: "763270960235",
+      appId: "1:763270960235:web:5343e8f87976424642cd2e",
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user || user.email !== "admin@lee.com") {
+        console.log("❌ Not authorized as admin");
+        window.location.href = "login.html";
+        return;
+      }
+      console.log("✅ Admin authenticated:", user.email);
+      loadAllOrders();
+    });
+
+    async function loadAllOrders() {
+      try {
+        console.log("📦 Loading all orders for admin...");
+        const ordersContainer = document.getElementById("orders-body");
+
+        // Get all orders
+        const ordersSnapshot = await getDocs(collection(db, "orders"));
+        console.log("📊 Found", ordersSnapshot.size, "total orders");
+
+        if (ordersSnapshot.empty) {
+          ordersContainer.innerHTML =
+            '<tr><td colspan="7" style="text-align:center;color:#7f8c8d;">No orders found</td></tr>';
           return;
         }
-        console.log("✅ Admin authenticated:", user.email);
-        loadAllOrders();
-      });
 
-      async function loadAllOrders() {
-        try {
-          console.log("📦 Loading all orders for admin...");
-          const ordersContainer = document.getElementById("orders-body");
+        ordersContainer.innerHTML = "";
+        const orders = [];
 
-          // Get all orders
-          const ordersSnapshot = await getDocs(collection(db, "orders"));
-          console.log("📊 Found", ordersSnapshot.size, "total orders");
-
-          if (ordersSnapshot.empty) {
-            ordersContainer.innerHTML =
-              '<tr><td colspan="7" style="text-align:center;color:#7f8c8d;">No orders found</td></tr>';
-            return;
-          }
-
-          ordersContainer.innerHTML = "";
-          const orders = [];
-
-          // Convert to array for sorting
-          ordersSnapshot.forEach((doc) => {
-            orders.push({
-              id: doc.id,
-              ...doc.data(),
-            });
+        // Convert to array for sorting
+        ordersSnapshot.forEach((doc) => {
+          orders.push({
+            id: doc.id,
+            ...doc.data(),
           });
+        });
 
-          // Sort by orderDate (newest first)
-          orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+        // Sort by orderDate (newest first)
+        orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
 
-          console.log("🔄 Processing", orders.length, "orders...");
+        console.log("🔄 Processing", orders.length, "orders...");
 
-          // Process each order
-          for (const order of orders) {
-            try {
-              console.log("📦 Processing order:", order.id);
+        // Process each order
+        for (const order of orders) {
+          try {
+            console.log("📦 Processing order:", order.id);
 
-              // Get user details
-              let user = {
-                fullName: "Unknown User",
-                email: "N/A",
-                phoneNumber: "N/A",
-              };
-              if (order.userId) {
-                try {
-                  const userDoc = await getDoc(doc(db, "users", order.userId));
-                  if (userDoc.exists()) {
-                    user = userDoc.data();
-                    console.log(
-                      "👤 Found user:",
-                      user.fullName,
-                      "for order:",
-                      order.id
-                    );
-                  } else {
-                    console.log(
-                      "⚠️ User document not found for:",
-                      order.userId
-                    );
-                  }
-                } catch (userError) {
-                  console.log("❌ Error fetching user:", userError.message);
+            // Get user details
+            let user = {
+              fullName: "Unknown User",
+              email: "N/A",
+              phoneNumber: "N/A",
+            };
+            if (order.userId) {
+              try {
+                const userDoc = await getDoc(doc(db, "users", order.userId));
+                if (userDoc.exists()) {
+                  user = userDoc.data();
+                  console.log(
+                    "👤 Found user:",
+                    user.fullName,
+                    "for order:",
+                    order.id
+                  );
+                } else {
+                  console.log(
+                    "⚠️ User document not found for:",
+                    order.userId
+                  );
                 }
+              } catch (userError) {
+                console.log("❌ Error fetching user:", userError.message);
               }
+            }
 
-              // Process order items
-              let itemsHTML = "<li>No items</li>";
-              if (order.items && order.items.length > 0) {
-                itemsHTML = order.items
-                  .map(
-                    (item) =>
-                      `<li>${item.name} x${item.quantity} - ₹${
-                        item.price * item.quantity
-                      }</li>`
-                  )
-                  .join("");
+            // Process order items
+            let itemsHTML = "<li>No items</li>";
+            if (order.items && order.items.length > 0) {
+              itemsHTML = order.items
+                .map(
+                  (item) =>
+                    `<li>${item.name} x${item.quantity} - ₹${item.price * item.quantity
+                    }</li>`
+                )
+                .join("");
+            }
+
+            // Format order date
+            const orderDate = new Date(order.orderDate).toLocaleDateString(
+              "en-IN",
+              {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
               }
+            );
 
-              // Format order date
-              const orderDate = new Date(order.orderDate).toLocaleDateString(
-                "en-IN",
-                {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                }
-              );
-
-              // Create table row
-              const tr = document.createElement("tr");
-              tr.innerHTML = `
-              <td><strong>#${order.id
+            // Create table row
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><strong>#${order.id
                 .substring(0, 8)
                 .toUpperCase()}</strong></td>
-              <td>
-                <span class="user-link" data-id="${order.id}">${
-                user.fullName
+                <td>
+                  <span class="user-link" data-id="${order.id}">${user.fullName
               }</span>
-                <span class="customer-email">${user.email}</span>
-                <div class="address-info" id="info-${order.id}">
-                  <p><strong>📞 Phone:</strong> ${
-                    user.phoneNumber || order.deliveryAddress?.phone || "N/A"
-                  }</p>
-                  <p><strong>📧 Email:</strong> ${user.email}</p>
-                  <p><strong>📍 Address:</strong> ${
-                    order.deliveryAddress?.street || "N/A"
-                  }, ${order.deliveryAddress?.city || "N/A"}, ${
-                order.deliveryAddress?.pincode || "N/A"
+                  <div class="address-info" id="info-${order.id}">
+                    <p><strong>📞 Phone:</strong> ${user.phoneNumber || order.deliveryAddress?.phone || "N/A"
               }</p>
-                  ${
-                    order.deliveryAddress?.landmark
-                      ? `<p><strong>🗺️ Landmark:</strong> ${order.deliveryAddress.landmark}</p>`
-                      : ""
-                  }
-                </div>
-              </td>
-              <td class="order-items">
-                <ul>${itemsHTML}</ul>
-              </td>
-              <td><strong>₹${order.totalAmount}</strong></td>
-              <td>${orderDate}</td>
-              <td>
-                <select class="status-select" data-id="${order.id}">
-                  <option ${
-                    order.status === "pending" ? "selected" : ""
-                  } value="pending">Pending</option>
-                  <option ${
-                    order.status === "preparing" ? "selected" : ""
-                  } value="preparing">Preparing</option>
-                  <option ${
-                    order.status === "out for delivery" ? "selected" : ""
-                  } value="out for delivery">Out for Delivery</option>
-                  <option ${
-                    order.status === "delivered" ? "selected" : ""
-                  } value="delivered">Delivered</option>
-                </select>
-              </td>
-              <td>
-                <button class="update-btn" data-id="${order.id}">Update</button>
-              </td>
-            `;
+                    <p><strong>📧 Email:</strong> ${user.email || "N/A"}</p>
+                    <p><strong>📍 Address:</strong> ${order.deliveryAddress?.street || "N/A"
+              }, ${order.deliveryAddress?.city || "N/A"}, ${order.deliveryAddress?.pincode || "N/A"
+              }</p>
+                    ${order.deliveryAddress?.landmark
+                ? `<p><strong>🗺️ Landmark:</strong> ${order.deliveryAddress.landmark}</p>`
+                : ""
+              }
+                  </div>
+                </td>
+                <td class="order-items">
+                  <ul>${itemsHTML}</ul>
+                </td>
+                <td><strong>₹${order.totalAmount}</strong></td>
+                <td>${orderDate}</td>
+                <td>
+                  <select class="status-select" data-id="${order.id}">
+                    <option ${order.status === "pending" ? "selected" : ""
+              } value="pending">Pending</option>
+                    <option ${order.status === "preparing" ? "selected" : ""
+              } value="preparing">Preparing</option>
+                    <option ${order.status === "out for delivery" ? "selected" : ""
+              } value="out for delivery">Out for Delivery</option>
+                    <option ${order.status === "delivered" ? "selected" : ""
+              } value="delivered">Delivered</option>
+                  </select>
+                </td>
+                <td>
+                  <button class="update-btn" data-id="${order.id}">Update</button>
+                </td>
+              `;
 
-              ordersContainer.appendChild(tr);
-            } catch (orderError) {
-              console.error("❌ Error processing order:", order.id, orderError);
-            }
+            ordersContainer.appendChild(tr);
+          } catch (orderError) {
+            console.error("❌ Error processing order:", order.id, orderError);
           }
-
-          console.log("✅ All orders loaded successfully");
-          attachEventListeners();
-        } catch (error) {
-          console.error("❌ Error loading orders:", error);
-          document.getElementById(
-            "orders-body"
-          ).innerHTML = `<tr><td colspan="7" style="text-align:center;color:#e74c3c;">Error loading orders: ${error.message}</td></tr>`;
         }
+
+        console.log("✅ All orders loaded successfully");
+        attachEventListeners();
+      } catch (error) {
+        console.error("❌ Error loading orders:", error);
+        document.getElementById(
+          "orders-body"
+        ).innerHTML = `<tr><td colspan="7" style="text-align:center;color:#e74c3c;">Error loading orders: ${error.message}</td></tr>`;
       }
+    }
 
-      function attachEventListeners() {
-        // Customer name click - show/hide address
-        document.querySelectorAll(".user-link").forEach((link) => {
-          link.onclick = () => {
-            const id = link.getAttribute("data-id");
-            const info = document.getElementById(`info-${id}`);
-            const isVisible = info.style.display === "block";
+    function attachEventListeners() {
+      // Customer name click - show/hide address
+      document.querySelectorAll(".user-link").forEach((link) => {
+        link.onclick = () => {
+          const id = link.getAttribute("data-id");
+          const info = document.getElementById(`info-${id}`);
+          const isVisible = info.style.display === "block";
 
-            // Hide all other address info first
-            document.querySelectorAll(".address-info").forEach((div) => {
-              div.style.display = "none";
-            });
+          // Hide all other address info first
+          document.querySelectorAll(".address-info").forEach((div) => {
+            div.style.display = "none";
+          });
 
-            // Toggle current one
-            info.style.display = isVisible ? "none" : "block";
-          };
-        });
+          // Toggle current one
+          info.style.display = isVisible ? "none" : "block";
+        };
+      });
 
-        // Update status buttons
-        document.querySelectorAll(".update-btn").forEach((btn) => {
-          btn.onclick = async () => {
-            const id = btn.getAttribute("data-id");
-            const select = document.querySelector(`select[data-id="${id}"]`);
-            const newStatus = select.value;
+      // Update status buttons
+      document.querySelectorAll(".update-btn").forEach((btn) => {
+        btn.onclick = async () => {
+          const id = btn.getAttribute("data-id");
+          const select = document.querySelector(`select[data-id="${id}"]`);
+          const newStatus = select.value;
 
-            btn.textContent = "Updating...";
-            btn.disabled = true;
+          btn.textContent = "Updating...";
+          btn.disabled = true;
 
-            try {
-              await updateDoc(doc(db, "orders", id), { status: newStatus });
-              console.log("✅ Updated order", id, "to", newStatus);
-              alert(
-                `Order #${id.substring(0, 8)} status updated to "${newStatus}"`
-              );
-            } catch (error) {
-              console.error("❌ Error updating status:", error);
-              alert("Error updating status: " + error.message);
-            } finally {
-              btn.textContent = "Update";
-              btn.disabled = false;
-            }
-          };
-        });
-      }
+          try {
+            await updateDoc(doc(db, "orders", id), { status: newStatus });
+            console.log("✅ Updated order", id, "to", newStatus);
+            alert(
+              `Order #${id.substring(0, 8)} status updated to "${newStatus}"`
+            );
+          } catch (error) {
+            console.error("❌ Error updating status:", error);
+            alert("Error updating status: " + error.message);
+          } finally {
+            btn.textContent = "Update";
+            btn.disabled = false;
+          }
+        };
+      });
+    }
 
-      document.getElementById("logout-btn").onclick = async () => {
-        await signOut(auth);
-        window.location.href = "login.html";
-      };
-    </script>
-  </body>
+    document.getElementById("logout-btn").onclick = async () => {
+      await signOut(auth);
+      window.location.href = "login.html";
+    };
+  </script>
+</body>
+
 </html>

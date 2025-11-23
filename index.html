@@ -1,223 +1,196 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="manifest" href="manifest.json" />
-    <meta name="theme-color" content="#4CAF50" />
-    <title>Login - Hotel Lee Food Delivery</title>
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/responsive.css" />
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
 
-      body {
-        font-family: "Arial", sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#4CAF50" />
+  <title>Login - Hotel Lee Food Delivery</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-      .login-container {
-        background: white;
-        padding: 2.5rem;
-        border-radius: 15px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-        width: 400px;
-        max-width: 90vw;
-      }
+    body {
+      font-family: "Arial", sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-      .logo {
-        text-align: center;
-        margin-bottom: 2rem;
-      }
+    .login-container {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 15px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      max-width: 90vw;
+      text-align: center;
+    }
 
-      .logo h1 {
-        color: #e74c3c;
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-      }
+    .logo {
+      margin-bottom: 2rem;
+    }
 
-      .logo p {
-        color: #7f8c8d;
-        font-size: 1rem;
-      }
+    .logo h1 {
+      color: #e74c3c;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
 
-      .form-group {
-        margin-bottom: 1.5rem;
-      }
+    .logo p {
+      color: #7f8c8d;
+      font-size: 1rem;
+    }
 
-      .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: #2c3e50;
-        font-weight: 500;
-      }
+    .google-btn {
+      width: 100%;
+      padding: 1rem;
+      background: white;
+      color: #757575;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-weight: 500;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
 
-      .form-group input {
-        width: 100%;
-        padding: 0.8rem;
-        border: 2px solid #ecf0f1;
-        border-radius: 8px;
-        font-size: 1rem;
-        transition: border-color 0.3s;
-      }
+    .google-btn:hover {
+      background: #f8f9fa;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
-      .form-group input:focus {
-        outline: none;
-        border-color: #e74c3c;
-      }
+    .google-btn img {
+      width: 24px;
+      height: 24px;
+    }
 
-      .login-btn {
-        width: 100%;
-        padding: 1rem;
-        background: #e74c3c;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 1.1rem;
-        cursor: pointer;
-        transition: background 0.3s;
-        margin-bottom: 1rem;
-      }
+    .signup-link {
+      margin-top: 1.5rem;
+    }
 
-      .login-btn:hover {
-        background: #c0392b;
-      }
+    .signup-link p {
+      color: #7f8c8d;
+    }
 
-      .login-btn:disabled {
-        background: #bdc3c7;
-        cursor: not-allowed;
-      }
+    .signup-link a {
+      color: #e74c3c;
+      text-decoration: none;
+      font-weight: 500;
+    }
 
-      .signup-link {
-        text-align: center;
-        margin-top: 1rem;
-      }
+    .signup-link a:hover {
+      text-decoration: underline;
+    }
 
-      .signup-link p {
-        color: #7f8c8d;
-      }
+    .admin-link {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #ecf0f1;
+    }
 
-      .signup-link a {
-        color: #e74c3c;
-        text-decoration: none;
-        font-weight: 500;
-      }
+    .admin-link a {
+      color: #3498db;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
 
-      .signup-link a:hover {
-        text-decoration: underline;
-      }
+    .message {
+      padding: 0.8rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      display: none;
+      text-align: left;
+    }
 
-      .admin-link {
-        text-align: center;
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid #ecf0f1;
-      }
+    .error-message {
+      background: #ffebee;
+      color: #c62828;
+      border: 1px solid #ffcdd2;
+    }
+  </style>
+</head>
 
-      .admin-link a {
-        color: #3498db;
-        text-decoration: none;
-        font-size: 0.9rem;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="login-container">
-      <div class="logo">
-        <h1>🏨 Hotel Lee</h1>
-        <p>Food Delivery Service</p>
-      </div>
-
-      <form id="login">
-        <div class="form-group">
-          <label for="login-email">Email Address</label>
-          <input type="email" id="login-email" required />
-        </div>
-
-        <div class="form-group">
-          <label for="login-password">Password</label>
-          <input type="password" id="login-password" required />
-        </div>
-
-        <button type="submit" class="login-btn" id="login-btn">Login</button>
-      </form>
-
-      <div class="signup-link">
-        <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
-      </div>
-
-      <div class="admin-link">
-        <a href="admin/login.html">Admin Panel</a>
-      </div>
+<body>
+  <div class="login-container">
+    <div class="logo">
+      <h1>🏨 Hotel Lee</h1>
+      <p>Food Delivery Service</p>
     </div>
 
-    <script type="module">
-      // Import Firebase configuration and services from the centralized config file
-      import {
-        auth,
-        signInWithEmailAndPassword,
-        onAuthStateChanged
-      } from "./js/firebase-config.js";
-      
-      console.log("🔥 Firebase initialized successfully!");
+    <div id="error-message" class="message error-message"></div>
 
-      // Check if user is already logged in
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          console.log("🔒 User already logged in:", user.email);
-          // Redirect to menu page
-          window.location.href = "user/menu.html";
-        } else {
-          console.log("👤 No user logged in");
-        }
-      });
+    <button id="google-login-btn" class="google-btn">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
+      Sign in with Google
+    </button>
 
-      // Handle Login Form
-      document
-        .getElementById("login")
-        .addEventListener("submit", async function (e) {
-          e.preventDefault();
-          console.log("🔑 Login form submitted!");
+    <div class="signup-link">
+      <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
+    </div>
 
-          const email = document.getElementById("login-email").value;
-          const password = document.getElementById("login-password").value;
+    <div class="admin-link">
+      <a href="admin/login.html">Admin Panel</a>
+    </div>
+  </div>
 
-          console.log("📋 Login data:", { email });
+  <script type="module">
+    // Import Firebase configuration and services
+    import { auth, onAuthStateChanged } from "./js/firebase-config.js";
+    import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 
-          const submitBtn = document.getElementById("login-btn");
-          submitBtn.textContent = "Signing In...";
-          submitBtn.disabled = true;
+    console.log("🔥 Firebase initialized successfully!");
 
-          try {
-            console.log("🔐 Signing in with Firebase Auth...");
-            const userCredential = await signInWithEmailAndPassword(
-              auth,
-              email,
-              password
-            );
-            const user = userCredential.user;
-            console.log("✅ User signed in successfully:", user.email);
+    // Check if user is already logged in
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("🔒 User already logged in:", user.email);
+        // Redirect to menu page
+        window.location.href = "user/menu.html";
+      } else {
+        console.log("👤 No user logged in");
+      }
+    });
 
-            // Redirect to menu page
-            window.location.href = "user/menu.html";
-          } catch (error) {
-            console.error("❌ Login error:", error);
-            alert("Error: " + error.message);
-          } finally {
-            submitBtn.textContent = "Login";
-            submitBtn.disabled = false;
-          }
-        });
-    </script>
-  </body>
+    // Google Sign-In Logic
+    const googleBtn = document.getElementById("google-login-btn");
+
+    googleBtn.addEventListener("click", async () => {
+      const provider = new GoogleAuthProvider();
+      const errorDiv = document.getElementById("error-message");
+
+      try {
+        console.log("🔵 Starting Google Sign-In...");
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        console.log("✅ User signed in:", user.displayName, user.email);
+
+        // Redirect to profile setup to ensure phone number is collected
+        window.location.href = "setup-profile.html";
+
+      } catch (error) {
+        console.error("❌ Google Sign-In Error:", error);
+        errorDiv.textContent = "Sign-in failed: " + error.message;
+        errorDiv.style.display = "block";
+      }
+    });
+  </script>
+</body>
+
 </html>
 <script>
   if ("serviceWorker" in navigator) {

@@ -1,428 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="manifest" href="manifest.json" />
-    <meta name="theme-color" content="#4CAF50" />
-    <title>Sign Up - Hotel Lee Food Delivery</title>
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/responsive.css" />
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
 
-      body {
-        font-family: "Arial", sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#4CAF50" />
+  <title>Sign Up - Hotel Lee Food Delivery</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-      .signup-container {
-        background: white;
-        padding: 2.5rem;
-        border-radius: 15px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-        width: 100%;
-        max-width: 420px;
-      }
+    body {
+      font-family: "Arial", sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-      .logo {
-        text-align: center;
-        margin-bottom: 2rem;
-      }
+    .signup-container {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 15px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      max-width: 90vw;
+      text-align: center;
+    }
 
-      .logo h1 {
-        color: #e74c3c;
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-      }
+    .logo {
+      margin-bottom: 2rem;
+    }
 
-      .logo p {
-        color: #7f8c8d;
-        font-size: 1rem;
-      }
+    .logo h1 {
+      color: #e74c3c;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
 
-      .form-group {
-        margin-bottom: 1.5rem;
-      }
+    .logo p {
+      color: #7f8c8d;
+      font-size: 1rem;
+    }
 
-      .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: #2c3e50;
-        font-weight: 500;
-      }
+    .google-btn {
+      width: 100%;
+      padding: 1rem;
+      background: white;
+      color: #757575;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-weight: 500;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
 
-      .form-group input {
-        width: 100%;
-        padding: 0.8rem;
-        border: 2px solid #ecf0f1;
-        border-radius: 8px;
-        font-size: 1rem;
-        transition: border-color 0.3s;
-        box-sizing: border-box;
-      }
+    .google-btn:hover {
+      background: #f8f9fa;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
-      .form-group input:focus {
-        outline: none;
-        border-color: #e74c3c;
-      }
+    .google-btn img {
+      width: 24px;
+      height: 24px;
+    }
 
-      .signup-btn {
-        width: 100%;
-        padding: 1rem;
-        background: #27ae60;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 1.1rem;
-        cursor: pointer;
-        transition: background 0.3s;
-        margin-bottom: 1rem;
-        font-weight: 600;
-      }
+    .login-link {
+      margin-top: 1.5rem;
+    }
 
-      .signup-btn:hover {
-        background: #219a52;
-      }
+    .login-link p {
+      color: #7f8c8d;
+    }
 
-      .signup-btn:disabled {
-        background: #bdc3c7;
-        cursor: not-allowed;
-      }
+    .login-link a {
+      color: #e74c3c;
+      text-decoration: none;
+      font-weight: 500;
+    }
 
-      .login-link {
-        text-align: center;
-        margin-top: 1rem;
-      }
+    .login-link a:hover {
+      text-decoration: underline;
+    }
 
-      .login-link p {
-        color: #7f8c8d;
-      }
+    .message {
+      padding: 0.8rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      display: none;
+      text-align: left;
+    }
 
-      .login-link a {
-        color: #e74c3c;
-        text-decoration: none;
-        font-weight: 500;
-      }
+    .error-message {
+      background: #ffebee;
+      color: #c62828;
+      border: 1px solid #ffcdd2;
+    }
+  </style>
+</head>
 
-      .login-link a:hover {
-        text-decoration: underline;
-      }
-
-      .message {
-        padding: 0.8rem;
-        border-radius: 6px;
-        margin-bottom: 1rem;
-        font-size: 0.9rem;
-        display: none;
-      }
-
-      .error-message {
-        background: #ffebee;
-        color: #c62828;
-        border: 1px solid #ffcdd2;
-      }
-
-      .success-message {
-        background: #e8f5e8;
-        color: #2e7d32;
-        border: 1px solid #c8e6c9;
-      }
-
-      .loading-spinner {
-        display: none;
-        width: 20px;
-        height: 20px;
-        border: 2px solid #ffffff;
-        border-top: 2px solid transparent;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-right: 10px;
-      }
-
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-
-      .btn-content {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .step-indicator {
-        text-align: center;
-        margin-bottom: 2rem;
-      }
-
-      .step {
-        display: inline-block;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        background: #e74c3c;
-        color: white;
-        line-height: 30px;
-        margin: 0 10px;
-        font-weight: bold;
-      }
-
-      .step.inactive {
-        background: #bdc3c7;
-      }
-
-      /* Mobile Responsive */
-      @media (max-width: 768px) {
-        body {
-          padding: 10px;
-        }
-
-        .signup-container {
-          padding: 2rem;
-          border-radius: 12px;
-        }
-
-        .logo h1 {
-          font-size: 1.8rem;
-        }
-
-        .form-group {
-          margin-bottom: 1.2rem;
-        }
-
-        .form-group input {
-          padding: 0.9rem;
-          font-size: 16px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        body {
-          padding: 5px;
-        }
-
-        .signup-container {
-          padding: 1.5rem;
-          border-radius: 10px;
-        }
-
-        .logo h1 {
-          font-size: 1.6rem;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="signup-container">
-      <div class="logo">
-        <h1>Hotel Lee</h1>
-        <p>Create Your Account</p>
-      </div>
-
-      <div class="step-indicator">
-        <span class="step">1</span>
-        <span class="step inactive">2</span>
-        <p style="margin-top: 10px; color: #7f8c8d">Step 1: Account Setup</p>
-      </div>
-
-      <div id="error-message" class="message error-message"></div>
-      <div id="success-message" class="message success-message"></div>
-
-      <form id="signup-form">
-        <div class="form-group">
-          <label for="signup-email">Email Address *</label>
-          <input
-            type="email"
-            id="signup-email"
-            required
-            placeholder="Enter your email"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="signup-password">Password *</label>
-          <input
-            type="password"
-            id="signup-password"
-            required
-            placeholder="Create a password (min 6 characters)"
-            minlength="6"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="signup-password-confirm">Confirm Password *</label>
-          <input
-            type="password"
-            id="signup-password-confirm"
-            required
-            placeholder="Confirm your password"
-            minlength="6"
-          />
-        </div>
-
-        <button type="submit" class="signup-btn" id="signup-btn">
-          <div class="btn-content">
-            <div class="loading-spinner" id="loading-spinner"></div>
-            <span id="btn-text">Create Account</span>
-          </div>
-        </button>
-      </form>
-
-      <div class="login-link">
-        <p>Already have an account? <a href="index.html">Login here</a></p>
-      </div>
+<body>
+  <div class="signup-container">
+    <div class="logo">
+      <h1>🏨 Hotel Lee</h1>
+      <p>Create an Account</p>
     </div>
 
-    <script type="module">
-      // Import Firebase configuration and services from the centralized config file
-      import {
-        auth,
-        createUserWithEmailAndPassword,
-        onAuthStateChanged
-      } from "./js/firebase-config.js";
+    <div id="error-message" class="message error-message"></div>
 
-      function showError(message) {
-        const errorDiv = document.getElementById("error-message");
-        const successDiv = document.getElementById("success-message");
-        errorDiv.textContent = message;
+    <button id="google-signup-btn" class="google-btn">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
+      Sign up with Google
+    </button>
+
+    <div class="login-link">
+      <p>Already have an account? <a href="index.html">Login here</a></p>
+    </div>
+  </div>
+
+  <script type="module">
+    // Import Firebase configuration and services
+    import { auth, onAuthStateChanged } from "./js/firebase-config.js";
+    import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+    // Check if user is already logged in
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("🔒 User already logged in:", user.email);
+        // Redirect to profile setup
+        window.location.href = "setup-profile.html";
+      }
+    });
+
+    // Google Sign-Up Logic
+    const googleBtn = document.getElementById("google-signup-btn");
+
+    googleBtn.addEventListener("click", async () => {
+      const provider = new GoogleAuthProvider();
+      const errorDiv = document.getElementById("error-message");
+
+      try {
+        console.log("🔵 Starting Google Sign-Up...");
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        console.log("✅ User signed up:", user.displayName, user.email);
+
+        // Redirect to profile setup
+        window.location.href = "setup-profile.html";
+
+      } catch (error) {
+        console.error("❌ Google Sign-Up Error:", error);
+        errorDiv.textContent = "Sign-up failed: " + error.message;
         errorDiv.style.display = "block";
-        successDiv.style.display = "none";
       }
+    });
+  </script>
+</body>
 
-      function showSuccess(message) {
-        const errorDiv = document.getElementById("error-message");
-        const successDiv = document.getElementById("success-message");
-        successDiv.textContent = message;
-        successDiv.style.display = "block";
-        errorDiv.style.display = "none";
-      }
-
-      function hideMessages() {
-        document.getElementById("error-message").style.display = "none";
-        document.getElementById("success-message").style.display = "none";
-      }
-
-      // Check if user is already logged in
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          console.log("🔒 User already logged in:", user.email);
-          // Redirect to profile setup instead of menu
-          window.location.href = "setup-profile.html";
-        }
-      });
-
-      // STEP 1: Create Firebase Auth user only
-      document
-        .getElementById("signup-form")
-        .addEventListener("submit", async function (e) {
-          e.preventDefault();
-          console.log("🚀 === STEP 1: ACCOUNT CREATION ===");
-
-          hideMessages();
-
-          // Get form values
-          const email = document.getElementById("signup-email").value.trim();
-          const password = document.getElementById("signup-password").value;
-          const confirmPassword = document.getElementById(
-            "signup-password-confirm"
-          ).value;
-
-          console.log("📋 Step 1 Data - Email:", email);
-
-          // Validation
-          if (!email || !password || !confirmPassword) {
-            showError("Please fill in all fields.");
-            return;
-          }
-
-          if (password.length < 6) {
-            showError("Password must be at least 6 characters long.");
-            return;
-          }
-
-          if (password !== confirmPassword) {
-            showError("Passwords do not match.");
-            return;
-          }
-
-          // UI Loading state
-          const submitBtn = document.getElementById("signup-btn");
-          const btnText = document.getElementById("btn-text");
-          const spinner = document.getElementById("loading-spinner");
-
-          btnText.textContent = "Creating Account...";
-          spinner.style.display = "block";
-          submitBtn.disabled = true;
-
-          try {
-            console.log("🔐 Creating Firebase Auth user...");
-
-            // Create Firebase Auth user ONLY
-            const userCredential = await createUserWithEmailAndPassword(
-              auth,
-              email,
-              password
-            );
-            const user = userCredential.user;
-
-            console.log(
-              "✅ Step 1 SUCCESS: Auth user created with UID:",
-              user.uid
-            );
-
-            showSuccess("Account created! Setting up your profile...");
-
-            // Redirect to profile setup page after short delay
-            setTimeout(() => {
-              console.log("🔄 Redirecting to profile setup...");
-              window.location.href = "setup-profile.html";
-            }, 1500);
-          } catch (error) {
-            console.error("❌ Step 1 FAILED:", error);
-
-            let errorMessage = "Failed to create account. Please try again.";
-
-            switch (error.code) {
-              case "auth/email-already-in-use":
-                errorMessage =
-                  "This email is already registered. Please login instead.";
-                break;
-              case "auth/invalid-email":
-                errorMessage = "Please enter a valid email address.";
-                break;
-              case "auth/weak-password":
-                errorMessage = "Password must be at least 6 characters long.";
-                break;
-              default:
-                errorMessage = error.message;
-            }
-
-            showError(errorMessage);
-          } finally {
-            btnText.textContent = "Create Account";
-            spinner.style.display = "none";
-            submitBtn.disabled = false;
-          }
-        });
-
-      console.log("🚀 Step 1 (Account Creation) page initialized");
-    </script>
-  </body>
 </html>
 <script>
   if ("serviceWorker" in navigator) {

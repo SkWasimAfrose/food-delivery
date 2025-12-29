@@ -1,30 +1,35 @@
-import { defineConfig } from 'vite';
-import { resolve } from 'path';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { VitePWA } from 'vite-plugin-pwa'
 
+// https://vite.dev/config/
 export default defineConfig({
-  build: {
-    rollupOptions: {
-      input: {
-        main: resolve(__dirname, 'index.html'),
-        signup: resolve(__dirname, 'signup.html'),
-        setupProfile: resolve(__dirname, 'setup-profile.html'),
-        // Admin pages
-        admin: resolve(__dirname, 'admin/login.html'),
-        adminDashboard: resolve(__dirname, 'admin/dashboard.html'),
-        adminCategories: resolve(__dirname, 'admin/categories.html'),
-        adminMenu: resolve(__dirname, 'admin/menu-management.html'),
-        adminOrders: resolve(__dirname, 'admin/orders-management.html'),
-        adminUsers: resolve(__dirname, 'admin/users.html'),
-        // User pages
-        userCart: resolve(__dirname, 'user/cart.html'),
-        userCheckout: resolve(__dirname, 'user/checkout.html'),
-        userMenu: resolve(__dirname, 'user/menu.html'),
-        userOrders: resolve(__dirname, 'user/orders.html'),
-        userProfile: resolve(__dirname, 'user/profile.html'),
-      },
-    },
-  },
-  server: {
-    port: 3000,
-  },
-});
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+      manifest: {
+        name: 'Hotel Lee',
+        short_name: 'Hotel Lee',
+        description: 'Hotel Lee Food Delivery App',
+        theme_color: '#FF6B6B',
+        background_color: '#fdfbfb',
+        display: 'standalone',
+        start_url: '/',
+        icons: [
+          {
+            src: 'logo.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: 'logo.png',
+            sizes: '512x512',
+            type: 'image/png'
+          }
+        ]
+      }
+    })
+  ],
+})
